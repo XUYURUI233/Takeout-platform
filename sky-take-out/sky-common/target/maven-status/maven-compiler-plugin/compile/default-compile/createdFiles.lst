@@ -1,5 +1,6 @@
 com\sky\constant\StatusConstant.class
 com\sky\result\PageResult.class
+com\sky\constant\SeckillConstant.class
 com\sky\constant\AutoFillConstant.class
 com\sky\utils\WeChatPayUtil.class
 com\sky\context\BaseContext.class
@@ -21,6 +22,7 @@ com\sky\exception\AddressBookBusinessException.class
 com\sky\exception\SetmealEnableFailedException.class
 com\sky\exception\DeletionNotAllowedException.class
 com\sky\json\JacksonObjectMapper.class
+com\sky\exception\SeckillException.class
 com\sky\exception\UserNotLoginException.class
 com\sky\utils\JwtUtil.class
 com\sky\exception\AccountNotFoundException.class

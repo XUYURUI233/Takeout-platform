@@ -7,12 +7,14 @@ E:\project\sky-take-out\sky-common\src\main\java\com\sky\utils\HttpClientUtil.ja
 E:\project\sky-take-out\sky-common\src\main\java\com\sky\exception\AddressBookBusinessException.java
 E:\project\sky-take-out\sky-common\src\main\java\com\sky\constant\JwtClaimsConstant.java
 E:\project\sky-take-out\sky-common\src\main\java\com\sky\exception\AccountLockedException.java
+E:\project\sky-take-out\sky-common\src\main\java\com\sky\exception\SeckillException.java
 E:\project\sky-take-out\sky-common\src\main\java\com\sky\properties\WeChatProperties.java
 E:\project\sky-take-out\sky-common\src\main\java\com\sky\constant\MessageConstant.java
 E:\project\sky-take-out\sky-common\src\main\java\com\sky\exception\OrderBusinessException.java
 E:\project\sky-take-out\sky-common\src\main\java\com\sky\result\Result.java
 E:\project\sky-take-out\sky-common\src\main\java\com\sky\constant\PasswordConstant.java
 E:\project\sky-take-out\sky-common\src\main\java\com\sky\json\JacksonObjectMapper.java
+E:\project\sky-take-out\sky-common\src\main\java\com\sky\constant\SeckillConstant.java
 E:\project\sky-take-out\sky-common\src\main\java\com\sky\exception\BaseException.java
 E:\project\sky-take-out\sky-common\src\main\java\com\sky\utils\JwtUtil.java
 E:\project\sky-take-out\sky-common\src\main\java\com\sky\constant\StatusConstant.java

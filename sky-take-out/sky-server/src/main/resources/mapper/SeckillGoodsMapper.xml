@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sky.mapper.SeckillGoodsMapper">
+
+    <insert id="insertBatch">
+        insert into seckill_goods (activity_id, goods_type, goods_id, goods_name, goods_image, original_price, seckill_price, 
+                                   total_stock, available_stock, sold_count, limit_count, version, status, create_time, update_time, create_user, update_user)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.activityId}, #{item.goodsType}, #{item.goodsId}, #{item.goodsName}, #{item.goodsImage}, 
+             #{item.originalPrice}, #{item.seckillPrice}, #{item.totalStock}, #{item.availableStock}, 
+             #{item.soldCount}, #{item.limitCount}, #{item.version}, #{item.status}, 
+             #{item.createTime}, #{item.updateTime}, #{item.createUser}, #{item.updateUser})
+        </foreach>
+    </insert>
+
+    <update id="update" parameterType="com.sky.entity.SeckillGoods">
+        update seckill_goods
+        <set>
+            <if test="seckillPrice != null">seckill_price = #{seckillPrice},</if>
+            <if test="totalStock != null">total_stock = #{totalStock},</if>
+            <if test="availableStock != null">available_stock = #{availableStock},</if>
+            <if test="limitCount != null">limit_count = #{limitCount},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="getAvailableGoods" resultType="com.sky.entity.SeckillGoods">
+        <if test="goodsType == 1">
+            select d.id as goods_id, d.name as goods_name, d.image as goods_image, d.price as original_price, 
+                   c.name as category_name, 1 as goods_type
+            from dish d
+            left join category c on d.category_id = c.id
+            where d.status = 1
+            <if test="name != null and name != ''">
+                and d.name like concat('%',#{name},'%')
+            </if>
+        </if>
+        <if test="goodsType == 2">
+            select s.id as goods_id, s.name as goods_name, s.image as goods_image, s.price as original_price, 
+                   c.name as category_name, 2 as goods_type
+            from setmeal s
+            left join category c on s.category_id = c.id
+            where s.status = 1
+            <if test="name != null and name != ''">
+                and s.name like concat('%',#{name},'%')
+            </if>
+        </if>
+    </select>
+
+</mapper>
+
+
+

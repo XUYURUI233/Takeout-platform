@@ -25,4 +25,16 @@ public class MessageConstant {
     public static final String ORDER_STATUS_ERROR = "订单状态错误";
     public static final String ORDER_NOT_FOUND = "订单不存在";
 
+    // 秒杀相关错误信息
+    public static final String SECKILL_ACTIVITY_NOT_EXISTS = "秒杀活动不存在";
+    public static final String SECKILL_ACTIVITY_NOT_STARTED = "秒杀活动未开始";
+    public static final String SECKILL_ACTIVITY_ENDED = "秒杀活动已结束";
+    public static final String SECKILL_GOODS_NOT_EXISTS = "秒杀商品不存在";
+    public static final String SECKILL_GOODS_OFF_SHELF = "秒杀商品已下架";
+    public static final String SECKILL_STOCK_NOT_ENOUGH = "库存不足";
+    public static final String SECKILL_EXCEED_LIMIT = "超出限购数量";
+    public static final String SECKILL_USER_REACHED_LIMIT = "用户已达购买上限";
+    public static final String SECKILL_ORDER_PAY_TIMEOUT = "订单支付超时";
+    public static final String SECKILL_SYSTEM_BUSY = "系统繁忙，请稍后重试";
+
 }

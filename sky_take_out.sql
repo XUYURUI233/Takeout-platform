@@ -11,7 +11,7 @@
  Target Server Version : 50536
  File Encoding         : 65001
 
- Date: 14/08/2025 00:47:45
+ Date: 17/08/2025 12:03:29
 */
 
 SET NAMES utf8mb4;
@@ -76,8 +76,8 @@ INSERT INTO `category` VALUES (19, 1, '新鲜时蔬', 7, 1, '2022-06-09 22:18:12
 INSERT INTO `category` VALUES (20, 1, '水煮鱼', 8, 1, '2022-06-09 22:22:29', '2022-06-09 22:23:45', 1, 1);
 INSERT INTO `category` VALUES (21, 1, '汤类', 11, 1, '2022-06-10 10:51:47', '2022-06-10 10:51:47', 1, 1);
 INSERT INTO `category` VALUES (22, 1, '请问', 1, 0, '2025-08-13 22:31:50', '2025-08-13 22:31:50', 1, 1);
-INSERT INTO `category` VALUES (23, 1, '阿德撒法鱼', 0, 0, '2025-08-13 22:40:40', '2025-08-13 22:40:40', 1, 1);
-INSERT INTO `category` VALUES (24, 2, '为全球', 1, 0, '2025-08-13 22:41:00', '2025-08-13 22:41:00', 1, 1);
+INSERT INTO `category` VALUES (23, 1, '阿德撒法鱼', 0, 1, '2025-08-13 22:40:40', '2025-08-14 01:27:16', 1, 1);
+INSERT INTO `category` VALUES (24, 2, '为全球', 1, 1, '2025-08-13 22:41:00', '2025-08-14 01:27:18', 1, 1);
 
 -- ----------------------------
 -- Table structure for dish
@@ -97,7 +97,7 @@ CREATE TABLE `dish`  (
   `update_user` bigint(20) NULL DEFAULT NULL COMMENT '修改人',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `idx_dish_name`(`name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 71 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '菜品' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 73 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '菜品' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of dish
@@ -127,6 +127,8 @@ INSERT INTO `dish` VALUES (67, '鮰鱼2斤', 16, 72.00, 'https://sky-itcast.oss-
 INSERT INTO `dish` VALUES (68, '鸡蛋汤', 21, 4.00, 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/c09a0ee8-9d19-428d-81b9-746221824113.png', '配料：鸡蛋，紫菜', 1, '2022-06-10 10:54:25', '2022-06-10 10:54:25', 1, 1);
 INSERT INTO `dish` VALUES (69, '平菇豆腐汤', 21, 6.00, 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/16d0a3d6-2253-4cfc-9b49-bf7bd9eb2ad2.png', '配料：豆腐，平菇', 1, '2022-06-10 10:55:02', '2022-06-10 10:55:02', 1, 1);
 INSERT INTO `dish` VALUES (70, '委屈委屈', 16, 1123.00, 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/037c0e09-a00b-4aa8-a44d-39d4e28a30be.png', '123', 1, '2025-08-13 22:40:22', '2025-08-13 22:42:42', 1, 1);
+INSERT INTO `dish` VALUES (71, '七个v啊', 16, 12.00, 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/2f00dc6f-bdad-4cf0-9946-f062cc726875.png', '', 1, '2025-08-14 01:26:17', '2025-08-14 01:26:21', 1, 1);
+INSERT INTO `dish` VALUES (72, '萨芬全国', 23, 12.00, 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/d47afa3a-c42c-41a6-ae35-95a9255e27fc.png', '', 1, '2025-08-14 01:27:53', '2025-08-14 01:29:12', 1, 1);
 
 -- ----------------------------
 -- Table structure for dish_flavor
@@ -138,7 +140,7 @@ CREATE TABLE `dish_flavor`  (
   `name` varchar(32) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '口味名称',
   `value` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '口味数据list',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 105 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '菜品口味关系表' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 108 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '菜品口味关系表' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of dish_flavor
@@ -168,6 +170,9 @@ INSERT INTO `dish_flavor` VALUES (101, 66, '辣度', '[\"不辣\",\"微辣\",\"�
 INSERT INTO `dish_flavor` VALUES (102, 67, '辣度', '[\"不辣\",\"微辣\",\"中辣\",\"重辣\"]');
 INSERT INTO `dish_flavor` VALUES (103, 65, '辣度', '[\"不辣\",\"微辣\",\"中辣\",\"重辣\"]');
 INSERT INTO `dish_flavor` VALUES (104, 70, '甜味', '[\"无糖\",\"少糖\",\"半糖\",\"多糖\",\"全糖\"]');
+INSERT INTO `dish_flavor` VALUES (105, 71, '辣度', '[\"不辣\",\"微辣\",\"中辣\",\"重辣\"]');
+INSERT INTO `dish_flavor` VALUES (106, 72, '温度', '[\"热饮\",\"常温\",\"去冰\",\"少冰\",\"多冰\"]');
+INSERT INTO `dish_flavor` VALUES (107, 72, '辣度', '[\"不辣\",\"微辣\",\"中辣\",\"重辣\"]');
 
 -- ----------------------------
 -- Table structure for employee
@@ -211,7 +216,7 @@ CREATE TABLE `order_detail`  (
   `number` int(11) NOT NULL DEFAULT 1 COMMENT '数量',
   `amount` decimal(10, 2) NOT NULL COMMENT '金额',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '订单明细表' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '订单明细表' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of order_detail
@@ -219,6 +224,21 @@ CREATE TABLE `order_detail`  (
 INSERT INTO `order_detail` VALUES (1, '委屈委屈', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/037c0e09-a00b-4aa8-a44d-39d4e28a30be.png', 1, 70, NULL, '半糖', 1, 1123.00);
 INSERT INTO `order_detail` VALUES (2, '委屈委屈', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/037c0e09-a00b-4aa8-a44d-39d4e28a30be.png', 1, 70, NULL, '无糖', 1, 1123.00);
 INSERT INTO `order_detail` VALUES (3, '鮰鱼2斤', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/8cfcc576-4b66-4a09-ac68-ad5b273c2590.png', 2, 67, NULL, '不辣', 1, 72.00);
+INSERT INTO `order_detail` VALUES (4, '委屈委屈', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/037c0e09-a00b-4aa8-a44d-39d4e28a30be.png', 3, 70, NULL, '无糖', 1, 1123.00);
+INSERT INTO `order_detail` VALUES (5, '委屈委屈', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/037c0e09-a00b-4aa8-a44d-39d4e28a30be.png', 4, 70, NULL, '无糖', 1, 1123.00);
+INSERT INTO `order_detail` VALUES (6, '江团鱼2斤', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/a101a1e9-8f8b-47b2-afa4-1abd47ea0a87.png', 5, 66, NULL, '中辣', 1, 119.00);
+INSERT INTO `order_detail` VALUES (7, '江团鱼2斤', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/a101a1e9-8f8b-47b2-afa4-1abd47ea0a87.png', 6, 66, NULL, '中辣', 1, 119.00);
+INSERT INTO `order_detail` VALUES (8, '草鱼2斤', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/b544d3ba-a1ae-4d20-a860-81cb5dec9e03.png', 7, 65, NULL, '不辣', 1, 68.00);
+INSERT INTO `order_detail` VALUES (9, '馋嘴牛蛙', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/7a55b845-1f2b-41fa-9486-76d187ee9ee1.png', 8, 64, NULL, NULL, 1, 88.00);
+INSERT INTO `order_detail` VALUES (10, '江团鱼2斤', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/a101a1e9-8f8b-47b2-afa4-1abd47ea0a87.png', 9, 66, NULL, '不辣', 1, 119.00);
+INSERT INTO `order_detail` VALUES (11, '北冰洋', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/4451d4be-89a2-4939-9c69-3a87151cb979.png', 10, 47, NULL, NULL, 1, 4.00);
+INSERT INTO `order_detail` VALUES (12, '雪花啤酒', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/bf8cbfc1-04d2-40e8-9826-061ee41ab87c.png', 10, 48, NULL, NULL, 1, 4.00);
+INSERT INTO `order_detail` VALUES (13, '平菇豆腐汤', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/16d0a3d6-2253-4cfc-9b49-bf7bd9eb2ad2.png', 10, 69, NULL, NULL, 1, 6.00);
+INSERT INTO `order_detail` VALUES (14, '蜀味水煮草鱼', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/a6953d5a-4c18-4b30-9319-4926ee77261f.png', 10, 53, NULL, '不要葱,不辣', 1, 38.00);
+INSERT INTO `order_detail` VALUES (15, '萨芬全国', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/d47afa3a-c42c-41a6-ae35-95a9255e27fc.png', 11, 72, NULL, '热饮,不辣', 1, 12.00);
+INSERT INTO `order_detail` VALUES (16, '粉色的四个', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/85d2cdb9-6e80-472f-8216-5334945fa224.png', 11, NULL, 2, NULL, 1, 1802.00);
+INSERT INTO `order_detail` VALUES (17, '馋嘴牛蛙', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/7a55b845-1f2b-41fa-9486-76d187ee9ee1.png', 12, 64, NULL, NULL, 1, 88.00);
+INSERT INTO `order_detail` VALUES (18, '粉色的四个', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/85d2cdb9-6e80-472f-8216-5334945fa224.png', 13, NULL, 2, NULL, 1, 1802.00);
 
 -- ----------------------------
 -- Table structure for orders
@@ -250,67 +270,87 @@ CREATE TABLE `orders`  (
   `tableware_number` int(11) NULL DEFAULT NULL COMMENT '餐具数量',
   `tableware_status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '餐具数量状态  1按餐量提供  0选择具体数量',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '订单表' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '订单表' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of orders
 -- ----------------------------
 INSERT INTO `orders` VALUES (1, '1755102031104', 5, 4, 1, '2025-08-14 00:20:31', '2025-08-14 00:20:33', 1, 1, 2253.00, '', '18026714983', '八栋7b503房间', NULL, '徐徐', NULL, NULL, NULL, '2025-08-14 00:50:00', 0, '2025-08-14 00:39:59', 2, 0, 0);
 INSERT INTO `orders` VALUES (2, '1755103092569', 6, 4, 1, '2025-08-14 00:38:12', '2025-08-14 00:38:14', 1, 1, 78.00, '', '18026714983', '八栋7b503房间', NULL, '徐徐', NULL, '菜品已销售完，暂时无法接单', '2025-08-14 00:39:12', '2025-08-14 01:08:00', 0, NULL, 1, 0, 0);
+INSERT INTO `orders` VALUES (3, '1755104529201', 6, 4, 1, '2025-08-14 01:02:09', '2025-08-14 01:02:11', 1, 1, 1130.00, '', '18026714983', '八栋7b503房间', NULL, '徐徐', NULL, '菜品已销售完，暂时无法接单', '2025-08-14 01:02:34', '2025-08-14 01:32:00', 0, NULL, 1, 0, 0);
+INSERT INTO `orders` VALUES (4, '1755104585495', 5, 4, 1, '2025-08-14 01:03:05', '2025-08-14 01:03:10', 1, 1, 1130.00, '', '18026714983', '八栋7b503房间', NULL, '徐徐', NULL, NULL, NULL, '2025-08-14 01:32:00', 0, '2025-08-14 01:10:05', 1, 2, 0);
+INSERT INTO `orders` VALUES (5, '1755104836485', 6, 4, 1, '2025-08-14 01:07:16', '2025-08-14 01:07:22', 1, 2, 126.00, '', '18026714983', '八栋7b503房间', NULL, '徐徐', '用户取消', NULL, '2025-08-14 01:07:26', '2025-08-14 01:37:00', 0, NULL, 1, 2, 0);
+INSERT INTO `orders` VALUES (6, '1755104858015', 6, 4, 1, '2025-08-14 01:07:38', '2025-08-14 01:07:39', 1, 2, 126.00, '', '18026714983', '八栋7b503房间', NULL, '徐徐', '用户取消', NULL, '2025-08-14 01:07:44', '2025-08-14 01:37:00', 0, NULL, 1, 0, 0);
+INSERT INTO `orders` VALUES (7, '1755104976808', 6, 4, 1, '2025-08-14 01:09:36', '2025-08-14 01:09:38', 1, 2, 75.00, '', '18026714983', '八栋7b503房间', NULL, '徐徐', '用户取消', NULL, '2025-08-14 01:09:42', '2025-08-14 01:39:00', 0, NULL, 1, 0, 0);
+INSERT INTO `orders` VALUES (8, '1755105211015', 6, 4, 1, '2025-08-14 01:13:31', NULL, 1, 0, 95.00, '', '18026714983', '八栋7b503房间', NULL, '徐徐', '订单超时，自动取消', NULL, '2025-08-14 01:29:00', '2025-08-14 01:43:00', 0, NULL, 1, 0, 0);
+INSERT INTO `orders` VALUES (9, '1755105852376', 6, 4, 1, '2025-08-14 01:24:12', '2025-08-14 01:24:14', 1, 1, 126.00, '', '18026714983', '八栋7b503房间', NULL, '徐徐', NULL, '餐厅已打烊，暂时无法接单', '2025-08-14 01:24:45', '2025-08-14 01:54:00', 0, NULL, 1, 0, 0);
+INSERT INTO `orders` VALUES (10, '1755105932769', 5, 4, 1, '2025-08-14 01:25:32', '2025-08-14 01:25:34', 1, 1, 62.00, '', '18026714983', '八栋7b503房间', NULL, '徐徐', NULL, NULL, NULL, '2025-08-14 01:55:00', 0, '2025-08-14 01:26:53', 4, 0, 0);
+INSERT INTO `orders` VALUES (11, '1755106183141', 6, 4, 1, '2025-08-14 01:29:43', '2025-08-14 01:29:44', 1, 1, 1822.00, '', '18026714983', '八栋7b503房间', NULL, '徐徐', '菜品已销售完，暂时无法接单', NULL, '2025-08-14 02:24:42', '2025-08-14 01:59:00', 0, '2025-08-14 01:30:40', 2, 0, 0);
+INSERT INTO `orders` VALUES (12, '1755109456528', 5, 4, 1, '2025-08-14 02:24:16', '2025-08-14 02:24:18', 1, 1, 95.00, '', '18026714983', '八栋7b503房间', NULL, '徐徐', NULL, NULL, NULL, '2025-08-14 02:54:00', 0, '2025-08-14 02:24:34', 1, 0, 0);
+INSERT INTO `orders` VALUES (13, '1755282303077', 5, 4, 1, '2025-08-16 02:25:03', '2025-08-16 02:25:05', 1, 1, 1809.00, '', '18026714983', '八栋7b503房间', NULL, '徐徐', NULL, NULL, NULL, '2025-08-16 02:54:00', 0, '2025-08-16 13:24:41', 1, 0, 0);
 
 -- ----------------------------
--- Table structure for seckill
+-- Table structure for seckill_activity
 -- ----------------------------
-DROP TABLE IF EXISTS `seckill`;
-CREATE TABLE `seckill`  (
+DROP TABLE IF EXISTS `seckill_activity`;
+CREATE TABLE `seckill_activity`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '����',
-  `seckill_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '��ɱ�����',
-  `seckill_description` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '��ɱ�����',
-  `start_time` datetime NOT NULL COMMENT '��ʼʱ��',
-  `end_time` datetime NOT NULL COMMENT '����ʱ��',
-  `banner_image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '���ͼƬ',
-  `status` tinyint(4) NOT NULL DEFAULT 1 COMMENT '״̬ 0-���� 1-����',
-  `create_time` datetime NOT NULL COMMENT '����ʱ��',
+  `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '��ɱ�����',
+  `image` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '�ͼƬ',
+  `start_time` datetime NOT NULL COMMENT '��ɱ��ʼʱ��',
+  `end_time` datetime NOT NULL COMMENT '��ɱ����ʱ��',
+  `status` int(11) NOT NULL DEFAULT 0 COMMENT '�״̬ 0:δ��ʼ 1:������ 2:�ѽ��� 3:��ȡ��',
+  `description` varchar(500) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '�����',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '����ʱ��',
   `update_time` datetime NULL DEFAULT NULL COMMENT '����ʱ��',
   `create_user` bigint(20) NULL DEFAULT NULL COMMENT '������',
-  `update_user` bigint(20) NULL DEFAULT NULL COMMENT '������',
+  `update_user` bigint(20) NULL DEFAULT NULL COMMENT '�޸���',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `idx_status_time`(`status`, `start_time`, `end_time`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '��ɱ���' ROW_FORMAT = Compact;
+  INDEX `idx_start_time`(`start_time`) USING BTREE,
+  INDEX `idx_end_time`(`end_time`) USING BTREE,
+  INDEX `idx_status`(`status`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '��ɱ���' ROW_FORMAT = Compact;
 
 -- ----------------------------
--- Records of seckill
+-- Records of seckill_activity
 -- ----------------------------
-INSERT INTO `seckill` VALUES (1, '��ʱ��ɱ�', '��ѡ��Ʒ��ʱ�ؼ�', '2024-01-20 10:00:00', '2024-01-20 12:00:00', 'https://example.com/banner.jpg', 1, '2025-08-13 14:33:36', NULL, 1, NULL);
+INSERT INTO `seckill_activity` VALUES (1, '阿松大', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/seckill-banner.png', '2025-08-20 10:00:00', '2025-08-20 12:00:00', 0, '啊士大夫', '2025-08-16 15:00:00', '2025-08-16 15:00:00', 1, 1);
 
 -- ----------------------------
--- Table structure for seckill_item
+-- Table structure for seckill_goods
 -- ----------------------------
-DROP TABLE IF EXISTS `seckill_item`;
-CREATE TABLE `seckill_item`  (
+DROP TABLE IF EXISTS `seckill_goods`;
+CREATE TABLE `seckill_goods`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '����',
-  `seckill_id` bigint(20) NOT NULL COMMENT '��ɱ�ID',
-  `dish_id` bigint(20) NOT NULL COMMENT '��ƷID',
-  `dish_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '��Ʒ����',
+  `activity_id` bigint(20) NOT NULL COMMENT '��ɱ�ID',
+  `goods_type` int(11) NOT NULL DEFAULT 1 COMMENT '��Ʒ���� 1:��Ʒ 2:�ײ�',
+  `goods_id` bigint(20) NOT NULL COMMENT '��ƷID����ƷID���ײ�ID��',
+  `goods_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '��Ʒ����',
+  `goods_image` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '��ƷͼƬ',
   `original_price` decimal(10, 2) NOT NULL COMMENT 'ԭ��',
   `seckill_price` decimal(10, 2) NOT NULL COMMENT '��ɱ��',
-  `seckill_stock` int(11) NOT NULL COMMENT '��ɱ���',
-  `current_stock` int(11) NOT NULL COMMENT '��ǰ���',
-  `limit_per_user` int(11) NOT NULL DEFAULT 1 COMMENT 'ÿ���޹�����',
-  `status` tinyint(4) NOT NULL DEFAULT 1 COMMENT '״̬ 0-���� 1-����',
-  `create_time` datetime NOT NULL COMMENT '����ʱ��',
+  `total_stock` int(11) NOT NULL DEFAULT 0 COMMENT '�ܿ��',
+  `available_stock` int(11) NOT NULL DEFAULT 0 COMMENT '���ÿ��',
+  `sold_count` int(11) NOT NULL DEFAULT 0 COMMENT '��������',
+  `limit_count` int(11) NOT NULL DEFAULT 1 COMMENT '�޹�����',
+  `version` int(11) NOT NULL DEFAULT 0 COMMENT '�汾�ţ������ֹ�����',
+  `status` int(11) NOT NULL DEFAULT 1 COMMENT '״̬ 0:�¼� 1:�ϼ�',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '����ʱ��',
   `update_time` datetime NULL DEFAULT NULL COMMENT '����ʱ��',
+  `create_user` bigint(20) NULL DEFAULT NULL COMMENT '������',
+  `update_user` bigint(20) NULL DEFAULT NULL COMMENT '�޸���',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `idx_seckill_id`(`seckill_id`) USING BTREE,
-  INDEX `idx_dish_id`(`dish_id`) USING BTREE,
+  UNIQUE INDEX `idx_activity_goods`(`activity_id`, `goods_type`, `goods_id`) USING BTREE,
+  INDEX `idx_activity_id`(`activity_id`) USING BTREE,
+  INDEX `idx_goods_type_id`(`goods_type`, `goods_id`) USING BTREE,
   INDEX `idx_status`(`status`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '��ɱ��Ʒ���' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '��ɱ��Ʒ��' ROW_FORMAT = Compact;
 
 -- ----------------------------
--- Records of seckill_item
+-- Records of seckill_goods
 -- ----------------------------
-INSERT INTO `seckill_item` VALUES (1, 1, 1, '��������', 28.00, 19.90, 100, 100, 2, 1, '2025-08-13 14:33:36', NULL);
-INSERT INTO `seckill_item` VALUES (2, 1, 2, '���Ŷ���', 18.00, 12.90, 80, 80, 3, 1, '2025-08-13 14:33:36', NULL);
+INSERT INTO `seckill_goods` VALUES (1, 1, 1, 46, '阿松大', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/41bfcacf-7ad4-4927-8b26-df366553a94c.png', 6.00, 3.00, 100, 100, 0, 2, 0, 1, '2025-08-16 15:00:00', '2025-08-16 15:00:00', 1, 1);
+INSERT INTO `seckill_goods` VALUES (2, 1, 1, 49, '萨达', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/76752350-2121-44d2-b477-10791c23a8ec.png', 2.00, 1.00, 200, 200, 0, 3, 0, 1, '2025-08-16 15:00:00', '2025-08-16 15:00:00', 1, 1);
 
 -- ----------------------------
 -- Table structure for seckill_order
@@ -318,31 +358,25 @@ INSERT INTO `seckill_item` VALUES (2, 1, 2, '���Ŷ���', 18.00, 12.90
 DROP TABLE IF EXISTS `seckill_order`;
 CREATE TABLE `seckill_order`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '����',
-  `order_number` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '������',
-  `seckill_id` bigint(20) NOT NULL COMMENT '��ɱ�ID',
-  `item_id` bigint(20) NOT NULL COMMENT '��ɱ��Ʒ��ID',
+  `order_id` bigint(20) NOT NULL COMMENT '����ID������orders���',
+  `activity_id` bigint(20) NOT NULL COMMENT '��ɱ�ID',
+  `seckill_goods_id` bigint(20) NOT NULL COMMENT '��ɱ��ƷID',
   `user_id` bigint(20) NOT NULL COMMENT '�û�ID',
-  `dish_id` bigint(20) NOT NULL COMMENT '��ƷID',
-  `dish_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '��Ʒ����',
-  `quantity` int(11) NOT NULL COMMENT '��������',
+  `quantity` int(11) NOT NULL DEFAULT 1 COMMENT '��������',
   `seckill_price` decimal(10, 2) NOT NULL COMMENT '��ɱ�۸�',
-  `total_amount` decimal(10, 2) NOT NULL COMMENT '�ܽ��',
-  `address_id` bigint(20) NOT NULL COMMENT '��ַID',
-  `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '��ע',
-  `status` tinyint(4) NOT NULL DEFAULT 1 COMMENT '����״̬ 1-��֧�� 2-��֧�� 3-��ȡ��',
-  `pay_method` tinyint(4) NULL DEFAULT NULL COMMENT '֧����ʽ 1-΢�� 2-֧����',
-  `pay_time` datetime NULL DEFAULT NULL COMMENT '֧��ʱ��',
-  `pay_deadline` datetime NOT NULL COMMENT '֧����ֹʱ��',
-  `create_time` datetime NOT NULL COMMENT '����ʱ��',
+  `total_amount` decimal(10, 2) NOT NULL COMMENT '�����ܽ��',
+  `pay_status` int(11) NOT NULL DEFAULT 0 COMMENT '֧��״̬ 0:δ֧�� 1:��֧�� 2:֧����ʱȡ��',
+  `pay_expire_time` datetime NOT NULL COMMENT '֧����ʱʱ��',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '����ʱ��',
   `update_time` datetime NULL DEFAULT NULL COMMENT '����ʱ��',
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `uk_order_number`(`order_number`) USING BTREE,
+  UNIQUE INDEX `idx_order_id_unique`(`order_id`) USING BTREE,
+  INDEX `idx_order_id`(`order_id`) USING BTREE,
+  INDEX `idx_activity_id`(`activity_id`) USING BTREE,
   INDEX `idx_user_id`(`user_id`) USING BTREE,
-  INDEX `idx_seckill_id`(`seckill_id`) USING BTREE,
-  INDEX `idx_item_id`(`item_id`) USING BTREE,
-  INDEX `idx_status`(`status`) USING BTREE,
-  INDEX `idx_create_time`(`create_time`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '��ɱ������' ROW_FORMAT = Compact;
+  INDEX `idx_pay_status`(`pay_status`) USING BTREE,
+  INDEX `idx_pay_expire_time`(`pay_expire_time`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '��ɱ������' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Table structure for seckill_stock_log
@@ -350,20 +384,40 @@ CREATE TABLE `seckill_order`  (
 DROP TABLE IF EXISTS `seckill_stock_log`;
 CREATE TABLE `seckill_stock_log`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '����',
-  `item_id` bigint(20) NOT NULL COMMENT '��ɱ��Ʒ��ID',
-  `operation_type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '�������ͣ�INCREASE/DECREASE/SET',
-  `stock_change` int(11) NOT NULL COMMENT '���仯��',
+  `seckill_goods_id` bigint(20) NOT NULL COMMENT '��ɱ��ƷID',
+  `user_id` bigint(20) NULL DEFAULT NULL COMMENT '�û�ID',
+  `order_id` bigint(20) NULL DEFAULT NULL COMMENT '����ID',
+  `operation_type` int(11) NOT NULL COMMENT '�������� 1:�ۼ���� 2:�ͷſ�� 3:��ʼ�����',
+  `quantity` int(11) NOT NULL COMMENT '��������',
   `before_stock` int(11) NOT NULL COMMENT '����ǰ���',
   `after_stock` int(11) NOT NULL COMMENT '��������',
-  `order_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '��������ID',
-  `operator` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '������',
-  `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '��ע',
-  `create_time` datetime NOT NULL COMMENT '����ʱ��',
+  `version` int(11) NOT NULL COMMENT '����ʱ�İ汾��',
+  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '��ע',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '����ʱ��',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `idx_item_id`(`item_id`) USING BTREE,
+  INDEX `idx_seckill_goods_id`(`seckill_goods_id`) USING BTREE,
+  INDEX `idx_user_id`(`user_id`) USING BTREE,
   INDEX `idx_order_id`(`order_id`) USING BTREE,
   INDEX `idx_create_time`(`create_time`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '��ɱ��������¼��' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '��ɱ��������־��' ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Table structure for seckill_user_record
+-- ----------------------------
+DROP TABLE IF EXISTS `seckill_user_record`;
+CREATE TABLE `seckill_user_record`  (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '����',
+  `activity_id` bigint(20) NOT NULL COMMENT '��ɱ�ID',
+  `seckill_goods_id` bigint(20) NOT NULL COMMENT '��ɱ��ƷID',
+  `user_id` bigint(20) NOT NULL COMMENT '�û�ID',
+  `quantity` int(11) NOT NULL DEFAULT 1 COMMENT '�ѹ�������',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '����ʱ��',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '����ʱ��',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `idx_unique_record`(`activity_id`, `seckill_goods_id`, `user_id`) USING BTREE,
+  INDEX `idx_activity_goods_user`(`activity_id`, `seckill_goods_id`, `user_id`) USING BTREE,
+  INDEX `idx_user_id`(`user_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '��ɱ�û������¼��' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Table structure for setmeal
@@ -383,12 +437,13 @@ CREATE TABLE `setmeal`  (
   `update_user` bigint(20) NULL DEFAULT NULL COMMENT '修改人',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `idx_setmeal_name`(`name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '套餐' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '套餐' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of setmeal
 -- ----------------------------
-INSERT INTO `setmeal` VALUES (1, 13, '敦煌艺术丝路圣', 546.00, 0, '武器', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/89759211-fd14-465c-a563-09b0b4abf7cf.png', '2025-08-13 22:42:29', '2025-08-13 22:42:29', 1, 1);
+INSERT INTO `setmeal` VALUES (1, 13, '敦煌艺术丝路圣', 546.00, 1, '武器', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/89759211-fd14-465c-a563-09b0b4abf7cf.png', '2025-08-13 22:42:29', '2025-08-14 01:28:29', 1, 1);
+INSERT INTO `setmeal` VALUES (2, 24, '粉色的四个', 1802.00, 1, '', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/85d2cdb9-6e80-472f-8216-5334945fa224.png', '2025-08-14 01:28:23', '2025-08-14 01:28:27', 1, 1);
 
 -- ----------------------------
 -- Table structure for setmeal_dish
@@ -402,13 +457,18 @@ CREATE TABLE `setmeal_dish`  (
   `price` decimal(10, 2) NULL DEFAULT NULL COMMENT '菜品单价（冗余字段）',
   `copies` int(11) NULL DEFAULT NULL COMMENT '菜品份数',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '套餐菜品关系' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '套餐菜品关系' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of setmeal_dish
 -- ----------------------------
 INSERT INTO `setmeal_dish` VALUES (1, 1, 61, '剁椒鱼头', 66.00, 1);
 INSERT INTO `setmeal_dish` VALUES (2, 1, 67, '鮰鱼2斤', 72.00, 1);
+INSERT INTO `setmeal_dish` VALUES (3, 2, 65, '草鱼2斤', 68.00, 1);
+INSERT INTO `setmeal_dish` VALUES (4, 2, 66, '江团鱼2斤', 119.00, 1);
+INSERT INTO `setmeal_dish` VALUES (5, 2, 67, '鮰鱼2斤', 72.00, 1);
+INSERT INTO `setmeal_dish` VALUES (6, 2, 70, '委屈委屈', 1123.00, 1);
+INSERT INTO `setmeal_dish` VALUES (7, 2, 71, '七个v啊', 12.00, 1);
 
 -- ----------------------------
 -- Table structure for shopping_cart
@@ -426,7 +486,7 @@ CREATE TABLE `shopping_cart`  (
   `amount` decimal(10, 2) NOT NULL COMMENT '金额',
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '购物车' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '购物车' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Table structure for user
