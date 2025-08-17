@@ -18,6 +18,12 @@ import java.time.LocalDateTime;
 public class SeckillGoodsVO implements Serializable {
 
     private Long id;
+    
+    // 前端商品选择对话框需要的字段
+    private String name;
+    private String image;
+    private java.math.BigDecimal price;
+    private Integer type;
 
     // 秒杀活动ID
     private Long activityId;
@@ -36,6 +42,9 @@ public class SeckillGoodsVO implements Serializable {
 
     // 商品图片
     private String goodsImage;
+
+    // 分类名称
+    private String categoryName;
 
     // 原价
     private BigDecimal originalPrice;

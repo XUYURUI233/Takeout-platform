@@ -61,6 +61,7 @@ E:\project\sky-take-out\sky-server\src\main\java\com\sky\service\CategoryService
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\service\UserService.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\controller\admin\ShopController.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\controller\user\UserController.java
+E:\project\sky-take-out\sky-server\src\main\java\com\sky\config\JacksonConfig.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\service\impl\SetmealServiceImpl.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\controller\admin\DishController.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\service\SeckillGoodsService.java

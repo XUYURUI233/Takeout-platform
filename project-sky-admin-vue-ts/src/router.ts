@@ -126,6 +126,26 @@ const router = new Router({
             hidden: true
           }
         },
+
+        {
+          path: "seckill",
+          component: () =>
+            import(/* webpackChunkName: "shopTable" */ "@/views/seckill/index.vue"),
+          meta: {
+            title: "秒杀管理",
+            icon: "icon-seckill"
+          }
+        },
+        
+        {
+          path: "/seckill/add",
+          component: () =>
+            import(/* webpackChunkName: "shopTable" */ "@/views/seckill/addSeckill.vue"),
+          meta: {
+            title: "添加秒杀活动",
+            hidden: true
+          }
+        },
         
         {
           path: "/setmeal/add",

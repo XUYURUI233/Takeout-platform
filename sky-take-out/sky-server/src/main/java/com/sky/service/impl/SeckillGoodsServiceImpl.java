@@ -48,12 +48,25 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
      */
     @Override
     public List<SeckillGoodsVO> getAvailableGoods(Integer type, String name) {
-        List<SeckillGoods> goodsList = seckillGoodsMapper.getAvailableGoods(type, name);
+        List<com.sky.vo.AvailableGoodsVO> availableGoods = seckillGoodsMapper.getAvailableGoods(type, name);
         List<SeckillGoodsVO> voList = new ArrayList<>();
         
-        for (SeckillGoods goods : goodsList) {
+        for (com.sky.vo.AvailableGoodsVO availableGood : availableGoods) {
             SeckillGoodsVO vo = new SeckillGoodsVO();
-            BeanUtils.copyProperties(goods, vo);
+            // 设置商品基本信息，字段名与前端匹配
+            vo.setId(availableGood.getId());  // 前端需要的是 id
+            vo.setName(availableGood.getName());  // 前端需要的是 name
+            vo.setImage(availableGood.getImage());  // 前端需要的是 image
+            vo.setPrice(availableGood.getPrice());  // 前端需要的是 price
+            vo.setType(availableGood.getType());  // 前端需要的是 type
+            vo.setCategoryName(availableGood.getCategoryName());
+            
+            // 同时设置原有字段以保持兼容性
+            vo.setGoodsId(availableGood.getId());
+            vo.setGoodsName(availableGood.getName());
+            vo.setGoodsImage(availableGood.getImage());
+            vo.setOriginalPrice(availableGood.getPrice());
+            vo.setGoodsType(availableGood.getType());
             voList.add(vo);
         }
         

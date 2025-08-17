@@ -23,6 +23,10 @@
   content: "\e60b";
 }
 
+.icon-seckill:before {
+  content: "\e60e";
+}
+
 .icon-user:before {
   content: "\e610";
 }

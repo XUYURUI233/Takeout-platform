@@ -88,7 +88,7 @@ public interface SeckillGoodsMapper {
      * @param name
      * @return
      */
-    List<SeckillGoods> getAvailableGoods(Integer goodsType, String name);
+    List<com.sky.vo.AvailableGoodsVO> getAvailableGoods(Integer goodsType, String name);
 }
 
 

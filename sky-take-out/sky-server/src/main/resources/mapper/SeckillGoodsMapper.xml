@@ -29,10 +29,9 @@
         where id = #{id}
     </update>
 
-    <select id="getAvailableGoods" resultType="com.sky.entity.SeckillGoods">
+    <select id="getAvailableGoods" resultType="com.sky.vo.AvailableGoodsVO">
         <if test="goodsType == 1">
-            select d.id as goods_id, d.name as goods_name, d.image as goods_image, d.price as original_price, 
-                   c.name as category_name, 1 as goods_type
+            select d.id, d.name, d.image, d.price, c.name as categoryName, 1 as type
             from dish d
             left join category c on d.category_id = c.id
             where d.status = 1
@@ -41,8 +40,7 @@
             </if>
         </if>
         <if test="goodsType == 2">
-            select s.id as goods_id, s.name as goods_name, s.image as goods_image, s.price as original_price, 
-                   c.name as category_name, 2 as goods_type
+            select s.id, s.name, s.image, s.price, c.name as categoryName, 2 as type
             from setmeal s
             left join category c on s.category_id = c.id
             where s.status = 1
