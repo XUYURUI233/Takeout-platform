@@ -32,6 +32,109 @@
   padding-top: 160rpx;
   position: relative;
 }
+.home_content .seckill-banner-wrapper.data-v-0b00c929 {
+  width: calc(100% - 60rpx);
+  height: 160rpx;
+  margin: 20rpx 30rpx;
+  border-radius: 20rpx;
+  overflow: visible;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
+  background-color: #f0f0f0;
+  border: 2rpx solid #ff6b35;
+  position: relative;
+  z-index: 1000 !important;
+  display: block;
+}
+.home_content .force-test-banner.data-v-0b00c929 {
+  width: 100%;
+  height: 80rpx;
+  background: linear-gradient(135deg, #ff0000, #ffff00);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3rpx solid #000000;
+  margin-bottom: 10rpx;
+  border-radius: 10rpx;
+  position: relative;
+  z-index: 1001 !important;
+}
+.home_content .force-test-text.data-v-0b00c929 {
+  color: black;
+  font-size: 28rpx;
+  font-weight: bold;
+  text-align: center;
+}
+.home_content .seckill-banner-wrapper-inside.data-v-0b00c929 {
+  width: 100%;
+  height: 120rpx;
+  margin: 20rpx 0;
+  border-radius: 15rpx;
+  overflow: visible;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+  background-color: #fff3e0;
+  border: 2rpx solid #ff9800;
+  position: relative;
+  z-index: 10;
+}
+.home_content .force-test-banner-inside.data-v-0b00c929 {
+  width: 100%;
+  height: 60rpx;
+  background: linear-gradient(135deg, #4CAF50, #8BC34A);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2rpx solid #2E7D32;
+  margin-bottom: 5rpx;
+  border-radius: 8rpx;
+  position: relative;
+}
+.home_content .force-test-text-inside.data-v-0b00c929 {
+  color: white;
+  font-size: 24rpx;
+  font-weight: bold;
+  text-align: center;
+}
+.home_content .seckill-banner-wrapper-before-menu.data-v-0b00c929 {
+  width: calc(100% - 40rpx);
+  height: 140rpx;
+  margin: 15rpx 20rpx;
+  border-radius: 16rpx;
+  overflow: visible;
+  box-shadow: 0 4rpx 15rpx rgba(0, 0, 0, 0.1);
+  background-color: #f8f9fa;
+  border: 2rpx solid #007bff;
+  position: relative;
+  z-index: 5;
+}
+.home_content .force-test-banner-before-menu.data-v-0b00c929 {
+  width: 100%;
+  height: 70rpx;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2rpx solid #004085;
+  margin-bottom: 5rpx;
+  border-radius: 12rpx;
+  position: relative;
+}
+.home_content .force-test-text-before-menu.data-v-0b00c929 {
+  color: white;
+  font-size: 26rpx;
+  font-weight: bold;
+  text-align: center;
+}
+.home_content .seckill-banner-wrapper-in-card.data-v-0b00c929 {
+  width: 100%;
+  height: 300rpx;
+  margin: 15rpx 0 10rpx 0;
+  border-radius: 12rpx;
+  overflow: hidden;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1rpx solid #e0e0e0;
+  position: relative;
+}
 .home_content .restaurant_info_box.data-v-0b00c929 {
   position: relative;
   color: #20232a;
@@ -164,7 +267,7 @@
   display: flex;
   width: 100%;
   height: calc(100vh - 260rpx);
-  margin-top: 135rpx;
+  margin-top: 450rpx;
 }
 .home_content .restaurant_menu_list .type_list.data-v-0b00c929 {
   display: flex;

@@ -3,6 +3,7 @@ import Phone from "@/components/uni-phone/index.vue" //拨打电话
 import popMask from "./components/popMask.vue" //规格
 import popCart from "./components/popCart.vue" //购物车弹出层
 import dishDetail from "./components/dishDetail.vue" //菜品详情
+import seckillBanner from "@/components/seckill-banner/seckill-banner.vue" //秒杀横幅
 import {
 	// 苍穹外卖相关的接口
 	userLogin,
@@ -70,7 +71,7 @@ export default {
 			rightIdAndType: {},
 			phoneData: "",
 			tablewareNumber: 0,
-			shopStatus: null,
+			shopStatus: 1, // 临时设置为1，确保横幅显示（正式环境应通过API获取）
 			scrollTop: 0,
 			menuHeight: 0, // 左边菜单的高度
 			menuItemHeight: 0, // 左边菜单item的高度
@@ -85,6 +86,7 @@ export default {
 		popMask,
 		popCart,
 		dishDetail,
+		seckillBanner,
 	},
 	//   计算属性
 	computed: {
@@ -428,10 +430,20 @@ export default {
 			await getShopStatus()
 				.then((res) => {
 					this.shopStatus = res.data
-					console.log(res.data);
+					console.log('店铺状态:', res.data);
 					this.setShopStatus(res.data)
+					// 如果店铺状态为营业中，触发横幅组件刷新
+					if (res.data === 1) {
+						this.$nextTick(() => {
+							console.log('店铺营业中，横幅应该显示')
+						})
+					}
 				})
-				.catch((err) => { })
+				.catch((err) => { 
+					console.error('获取店铺状态失败:', err)
+					// 如果获取失败，默认设置为营业中，确保功能可用
+					this.shopStatus = 1
+				})
 		},
 		// 获取店铺电话
 		async getMerchantInfo() {

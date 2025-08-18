@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 秒杀活动表
+ * 秒杀活动实体类
  */
 @Data
 @Builder
@@ -19,25 +19,33 @@ public class SeckillActivity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 活动状态常量
+     */
+    public static final Integer NOT_STARTED = 0; // 未开始
+    public static final Integer ACTIVE = 1;      // 进行中
+    public static final Integer ENDED = 2;       // 已结束
+    public static final Integer CANCELLED = 3;   // 已取消
+
     private Long id;
 
-    // 秒杀活动名称
+    // 活动名称
     private String name;
 
     // 活动图片
     private String image;
 
-    // 秒杀开始时间
+    // 开始时间
     private LocalDateTime startTime;
 
-    // 秒杀结束时间
+    // 结束时间
     private LocalDateTime endTime;
-
-    // 活动状态 0:未开始 1:进行中 2:已结束 3:已取消
-    private Integer status;
 
     // 活动描述
     private String description;
+
+    // 活动状态 0:未开始 1:进行中 2:已结束 3:已取消
+    private Integer status;
 
     // 创建时间
     private LocalDateTime createTime;
@@ -48,6 +56,6 @@ public class SeckillActivity implements Serializable {
     // 创建人
     private Long createUser;
 
-    // 修改人
+    // 更新人
     private Long updateUser;
 }

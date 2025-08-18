@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -17,15 +18,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class SeckillGoodsVO implements Serializable {
 
-    private Long id;
-    
-    // 前端商品选择对话框需要的字段
-    private String name;
-    private String image;
-    private java.math.BigDecimal price;
-    private Integer type;
+    private static final long serialVersionUID = 1L;
 
-    // 秒杀活动ID
+    private Long id;
+
+    // 活动ID
     private Long activityId;
 
     // 活动名称
@@ -34,7 +31,7 @@ public class SeckillGoodsVO implements Serializable {
     // 商品类型 1:菜品 2:套餐
     private Integer goodsType;
 
-    // 商品ID（菜品ID或套餐ID）
+    // 商品ID
     private Long goodsId;
 
     // 商品名称
@@ -42,9 +39,6 @@ public class SeckillGoodsVO implements Serializable {
 
     // 商品图片
     private String goodsImage;
-
-    // 分类名称
-    private String categoryName;
 
     // 原价
     private BigDecimal originalPrice;
@@ -64,24 +58,30 @@ public class SeckillGoodsVO implements Serializable {
     // 限购数量
     private Integer limitCount;
 
+    // 商品状态 0:下架 1:上架
+    private Integer status;
+
+    // 版本号（乐观锁）
+    private Integer version;
+
     // 用户已购买数量
     private Integer userPurchased;
 
-    // 是否可购买
+    // 是否可以购买
     private Boolean canPurchase;
 
-    // 状态 0:下架 1:上架
-    private Integer status;
+    // 商品描述
+    private String description;
 
-    // 秒杀开始时间
+    // 活动开始时间
     private LocalDateTime startTime;
 
-    // 秒杀结束时间
+    // 活动结束时间
     private LocalDateTime endTime;
 
     // 剩余时间（秒）
     private Long remainingTime;
 
-    // 商品描述
-    private String description;
+    // 分类名称
+    private String categoryName;
 }

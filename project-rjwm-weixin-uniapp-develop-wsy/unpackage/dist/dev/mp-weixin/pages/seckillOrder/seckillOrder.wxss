@@ -1,0 +1,177 @@
+@charset "UTF-8";
+/**
+ * 这里是uni-app内置的常用样式变量
+ *
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ *
+ */
+/**
+ * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ *
+ * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ */
+/* 颜色变量 */
+/* 行为相关颜色 */
+/* 文字基本颜色 */
+/* 背景颜色 */
+/* 边框颜色 */
+/* 尺寸变量 */
+/* 文字尺寸 */
+/* 图片尺寸 */
+/* Border Radius */
+/* 水平间距 */
+/* 垂直间距 */
+/* 透明度 */
+/* 文章场景相关 */
+.seckill_order.data-v-aa570b34 {
+  height: 100%;
+}
+.seckill_order .recent_orders.data-v-aa570b34 {
+  padding-top: 8rpx;
+}
+.scroll-row.data-v-aa570b34 {
+  height: 88rpx;
+  line-height: 88rpx;
+  background-color: #fff;
+  padding: 0 30rpx;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  width: 100vw;
+  box-sizing: border-box;
+  flex-wrap: nowrap;
+  overflow: auto;
+  display: flex;
+}
+.scroll-row-item.data-v-aa570b34 {
+  margin-right: 88rpx;
+  color: #666;
+  display: inline-block;
+  font-size: 28rpx;
+  flex-shrink: 0;
+}
+.scroll-row-item-act.data-v-aa570b34 {
+  color: #ff4d4f;
+  position: relative;
+  font-weight: 600;
+}
+.scroll-row-item-act .line.data-v-aa570b34 {
+  width: 32rpx;
+  height: 8rpx;
+  display: block;
+  background: #ff4d4f;
+  border-radius: 8rpx;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  position: absolute;
+  bottom: -4rpx;
+  left: 50%;
+}
+.box.order_lists.data-v-aa570b34 {
+  margin: 16rpx 20rpx;
+  padding: 24rpx;
+  background: #fff;
+  border-radius: 12rpx;
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.1);
+}
+.box.order_lists .date_type.data-v-aa570b34 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 1px solid #f5f5f5;
+}
+.box.order_lists .date_type .time.data-v-aa570b34 {
+  font-size: 24rpx;
+  color: #999;
+}
+.box.order_lists .date_type .type.data-v-aa570b34 {
+  font-size: 24rpx;
+  color: #ff4d4f;
+  font-weight: 500;
+}
+.box.order_lists .orderBox.data-v-aa570b34 {
+  margin-bottom: 20rpx;
+}
+.box.order_lists .orderBox .seckill_goods_info.data-v-aa570b34 {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+.box.order_lists .orderBox .seckill_goods_info .goods_image.data-v-aa570b34 {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 8rpx;
+  overflow: hidden;
+  margin-right: 20rpx;
+}
+.box.order_lists .orderBox .seckill_goods_info .goods_image image.data-v-aa570b34 {
+  width: 100%;
+  height: 100%;
+}
+.box.order_lists .orderBox .seckill_goods_info .goods_detail.data-v-aa570b34 {
+  flex: 1;
+}
+.box.order_lists .orderBox .seckill_goods_info .goods_detail .activity_name.data-v-aa570b34 {
+  font-size: 24rpx;
+  color: #ff4d4f;
+  background: #fff2f0;
+  padding: 4rpx 8rpx;
+  border-radius: 4rpx;
+  display: inline-block;
+  margin-bottom: 8rpx;
+}
+.box.order_lists .orderBox .seckill_goods_info .goods_detail .goods_name.data-v-aa570b34 {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 12rpx;
+}
+.box.order_lists .orderBox .seckill_goods_info .goods_detail .price_info.data-v-aa570b34 {
+  display: flex;
+  align-items: center;
+}
+.box.order_lists .orderBox .seckill_goods_info .goods_detail .price_info .seckill_price.data-v-aa570b34 {
+  font-size: 32rpx;
+  color: #ff4d4f;
+  font-weight: 600;
+  margin-right: 16rpx;
+}
+.box.order_lists .orderBox .seckill_goods_info .goods_detail .price_info .original_price.data-v-aa570b34 {
+  font-size: 24rpx;
+  color: #999;
+  text-decoration: line-through;
+  margin-right: 16rpx;
+}
+.box.order_lists .orderBox .seckill_goods_info .goods_detail .price_info .quantity.data-v-aa570b34 {
+  font-size: 24rpx;
+  color: #666;
+}
+.box.order_lists .orderBox .order_amount.data-v-aa570b34 {
+  text-align: right;
+}
+.box.order_lists .orderBox .order_amount text.data-v-aa570b34 {
+  font-size: 32rpx;
+  color: #ff4d4f;
+  font-weight: 600;
+}
+.box.order_lists .againBtn.data-v-aa570b34 {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16rpx;
+}
+.box.order_lists .againBtn .new_btn.data-v-aa570b34 {
+  width: 160rpx;
+  height: 60rpx;
+  line-height: 60rpx;
+  font-size: 24rpx;
+  border-radius: 30rpx;
+  border: 1px solid #ddd;
+  background: #fff;
+  color: #666;
+}
+.box.order_lists .againBtn .new_btn.btn.data-v-aa570b34 {
+  background: #ff4d4f;
+  color: #fff;
+  border-color: #ff4d4f;
+}

@@ -3,54 +3,97 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sky.mapper.SeckillGoodsMapper">
 
-    <insert id="insertBatch">
-        insert into seckill_goods (activity_id, goods_type, goods_id, goods_name, goods_image, original_price, seckill_price, 
-                                   total_stock, available_stock, sold_count, limit_count, version, status, create_time, update_time, create_user, update_user)
-        values
+    <!-- Insert seckill goods -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into seckill_goods (
+            activity_id, goods_type, goods_id, goods_name, goods_image, original_price, seckill_price,
+            total_stock, available_stock, sold_count, limit_count, status, version,
+            create_time, update_time, create_user, update_user
+        ) values (
+            #{activityId}, #{goodsType}, #{goodsId}, #{goodsName}, #{goodsImage}, #{originalPrice}, #{seckillPrice},
+            #{totalStock}, #{availableStock}, #{soldCount}, #{limitCount}, #{status}, #{version},
+            #{createTime}, #{updateTime}, #{createUser}, #{updateUser}
+        )
+    </insert>
+
+    <!-- Batch insert seckill goods -->
+    <insert id="insertBatch" useGeneratedKeys="true" keyProperty="id">
+        insert into seckill_goods (
+            activity_id, goods_type, goods_id, goods_name, goods_image, original_price, seckill_price,
+            total_stock, available_stock, sold_count, limit_count, status, version,
+            create_time, update_time, create_user, update_user
+        ) values
         <foreach collection="list" item="item" separator=",">
-            (#{item.activityId}, #{item.goodsType}, #{item.goodsId}, #{item.goodsName}, #{item.goodsImage}, 
-             #{item.originalPrice}, #{item.seckillPrice}, #{item.totalStock}, #{item.availableStock}, 
-             #{item.soldCount}, #{item.limitCount}, #{item.version}, #{item.status}, 
-             #{item.createTime}, #{item.updateTime}, #{item.createUser}, #{item.updateUser})
+            (
+                #{item.activityId}, #{item.goodsType}, #{item.goodsId}, #{item.goodsName}, #{item.goodsImage}, 
+                #{item.originalPrice}, #{item.seckillPrice}, #{item.totalStock}, #{item.availableStock}, 
+                #{item.soldCount}, #{item.limitCount}, #{item.status}, #{item.version},
+                #{item.createTime}, #{item.updateTime}, #{item.createUser}, #{item.updateUser}
+            )
         </foreach>
     </insert>
 
-    <update id="update" parameterType="com.sky.entity.SeckillGoods">
+    <!-- Update seckill goods -->
+    <update id="update">
         update seckill_goods
         <set>
+            <if test="goodsName != null">goods_name = #{goodsName},</if>
+            <if test="goodsImage != null">goods_image = #{goodsImage},</if>
+            <if test="originalPrice != null">original_price = #{originalPrice},</if>
             <if test="seckillPrice != null">seckill_price = #{seckillPrice},</if>
             <if test="totalStock != null">total_stock = #{totalStock},</if>
             <if test="availableStock != null">available_stock = #{availableStock},</if>
+            <if test="soldCount != null">sold_count = #{soldCount},</if>
             <if test="limitCount != null">limit_count = #{limitCount},</if>
             <if test="status != null">status = #{status},</if>
+            <if test="version != null">version = #{version},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="updateUser != null">update_user = #{updateUser}</if>
         </set>
         where id = #{id}
     </update>
 
-    <select id="getAvailableGoods" resultType="com.sky.vo.AvailableGoodsVO">
-        <if test="goodsType == 1">
-            select d.id, d.name, d.image, d.price, c.name as categoryName, 1 as type
-            from dish d
-            left join category c on d.category_id = c.id
-            where d.status = 1
-            <if test="name != null and name != ''">
-                and d.name like concat('%',#{name},'%')
-            </if>
-        </if>
-        <if test="goodsType == 2">
-            select s.id, s.name, s.image, s.price, c.name as categoryName, 2 as type
-            from setmeal s
-            left join category c on s.category_id = c.id
-            where s.status = 1
-            <if test="name != null and name != ''">
-                and s.name like concat('%',#{name},'%')
-            </if>
-        </if>
+    <!-- Deduct stock with optimistic lock -->
+    <update id="deductStock">
+        update seckill_goods 
+        set available_stock = available_stock - #{quantity}, 
+            sold_count = sold_count + #{quantity},
+            version = version + 1,
+            update_time = now()
+        where id = #{id} 
+          and available_stock >= #{quantity} 
+          and version = #{version}
+          and status = 1
+    </update>
+
+    <!-- Get stock information by IDs -->
+    <select id="getStockInfoByIds" resultType="com.sky.entity.SeckillGoods">
+        select id, available_stock, sold_count, version, update_time 
+        from seckill_goods 
+        where id in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
     </select>
 
+    <!-- Get low stock goods -->
+    <select id="getLowStockGoods" resultType="com.sky.entity.SeckillGoods">
+        select * from seckill_goods 
+        where available_stock &lt; #{threshold}
+        <if test="activityId != null">
+            and activity_id = #{activityId}
+        </if>
+        and status = 1
+        order by available_stock asc
+    </select>
+
+    <!-- Batch update version -->
+    <update id="batchUpdateVersion">
+        update seckill_goods set version = version + 1 
+        where id in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </update>
+
 </mapper>
-
-
-

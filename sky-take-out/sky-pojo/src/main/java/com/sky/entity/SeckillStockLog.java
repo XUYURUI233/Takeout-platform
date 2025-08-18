@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 秒杀库存操作日志表
+ * 秒杀库存日志实体类
  */
 @Data
 @Builder
@@ -19,18 +19,18 @@ public class SeckillStockLog implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 操作类型常量
+     */
+    public static final Integer DEDUCT_STOCK = 1;  // 扣减库存
+    public static final Integer RELEASE_STOCK = 2; // 释放库存
+
     private Long id;
 
     // 秒杀商品ID
     private Long seckillGoodsId;
 
-    // 用户ID
-    private Long userId;
-
-    // 订单ID
-    private Long orderId;
-
-    // 操作类型 1:扣减库存 2:释放库存 3:初始化库存
+    // 操作类型 1:扣减 2:释放
     private Integer operationType;
 
     // 操作数量
@@ -42,15 +42,12 @@ public class SeckillStockLog implements Serializable {
     // 操作后库存
     private Integer afterStock;
 
-    // 操作时的版本号
-    private Integer version;
+    // 关联订单ID
+    private Long orderId;
 
-    // 备注
-    private String remark;
+    // 操作描述
+    private String description;
 
     // 创建时间
     private LocalDateTime createTime;
 }
-
-
-

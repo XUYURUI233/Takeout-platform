@@ -2,6 +2,7 @@
   "navigationStyle": "custom",
   "navigationBarTitleText": "苍穹外卖",
   "usingComponents": {
+    "seckill-banner": "/components/seckill-banner/seckill-banner",
     "nav-bar": "/pages/common/Navbar/navbar",
     "phone": "/components/uni-phone/index",
     "pop-mask": "/pages/index/components/popMask",

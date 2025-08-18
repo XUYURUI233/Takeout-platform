@@ -187,12 +187,22 @@ export default {
     },
     // 点击整体设置为默认地址并返填订单页面
     choseAddress(e, item) {
-      if (this.addressBackUrl !== "/pages/order/index") {
+      // 支持普通订单和秒杀订单的地址选择
+      if (this.addressBackUrl !== "/pages/order/index" && this.addressBackUrl !== "/pages/seckill/order/order") {
         return false;
       }
-      uni.redirectTo({
-        url: "/pages/order/index?address=" + JSON.stringify(item),
-      });
+      
+      // 根据不同的来源页面跳转
+      if (this.addressBackUrl === "/pages/seckill/order/order") {
+        uni.redirectTo({
+          url: "/pages/seckill/order/order?address=" + JSON.stringify(item),
+        });
+      } else {
+        uni.redirectTo({
+          url: "/pages/order/index?address=" + JSON.stringify(item),
+        });
+      }
+      
       this.setAddress(item);
     },
     getRadio(index, item) {

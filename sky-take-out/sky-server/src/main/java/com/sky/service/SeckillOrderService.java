@@ -1,10 +1,10 @@
 package com.sky.service;
 
-import com.sky.dto.SeckillOrderDTO;
-import com.sky.dto.SeckillOrderPageQueryDTO;
+import com.sky.dto.OrdersPaymentDTO;
+import com.sky.dto.SeckillOrderSubmitDTO;
 import com.sky.result.PageResult;
+import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.SeckillOrderSubmitVO;
-import com.sky.vo.SeckillOrderVO;
 
 /**
  * 秒杀订单Service接口
@@ -13,38 +13,24 @@ public interface SeckillOrderService {
 
     /**
      * 提交秒杀订单
-     * @param seckillOrderDTO
+     * @param seckillOrderSubmitDTO
      * @return
      */
-    SeckillOrderSubmitVO submitOrder(SeckillOrderDTO seckillOrderDTO);
+    SeckillOrderSubmitVO submitOrder(SeckillOrderSubmitDTO seckillOrderSubmitDTO);
 
     /**
      * 秒杀订单支付
-     * @param orderNumber
-     * @param payMethod
+     * @param ordersPaymentDTO
      * @return
+     * @throws Exception
      */
-    void payment(String orderNumber, Integer payMethod);
+    OrderPaymentVO payment(OrdersPaymentDTO ordersPaymentDTO) throws Exception;
 
     /**
-     * 取消秒杀订单
-     * @param id
+     * 支付成功，修改订单状态
+     * @param outTradeNo
      */
-    void cancelOrder(Long id);
-
-    /**
-     * 分页查询秒杀订单（管理端）
-     * @param seckillOrderPageQueryDTO
-     * @return
-     */
-    PageResult adminPageQuery(SeckillOrderPageQueryDTO seckillOrderPageQueryDTO);
-
-    /**
-     * 查询秒杀订单详情（管理端）
-     * @param id
-     * @return
-     */
-    SeckillOrderVO getOrderDetails(Long id);
+    void paySuccess(String outTradeNo);
 
     /**
      * 分页查询用户秒杀订单
@@ -53,27 +39,38 @@ public interface SeckillOrderService {
      * @param status
      * @return
      */
-    PageResult userPageQuery(Integer page, Integer pageSize, Integer status);
+    PageResult pageQueryByUser(int page, int pageSize, Integer status);
 
     /**
-     * 查询用户秒杀订单详情
+     * 根据ID查询秒杀订单详情
      * @param id
      * @return
      */
-    SeckillOrderVO getUserOrderDetails(Long id);
+    Object getOrderDetail(Long id);
+
+    /**
+     * 取消秒杀订单
+     * @param id
+     */
+    void cancelOrder(Long id);
 
     /**
      * 再来一单
      * @param id
      * @return
      */
-    SeckillOrderSubmitVO againOrder(Long id);
+    SeckillOrderSubmitVO repeatOrder(Long id);
 
     /**
-     * 处理超时未支付订单
+     * 处理超时未支付的秒杀订单
      */
     void handleExpiredOrders();
+
+    /**
+     * 检查用户购买资格
+     * @param seckillGoodsId
+     * @param quantity
+     * @return
+     */
+    Object checkEligibility(Long seckillGoodsId, Integer quantity);
 }
-
-
-

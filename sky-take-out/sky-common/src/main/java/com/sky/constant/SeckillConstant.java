@@ -1,37 +1,37 @@
 package com.sky.constant;
 
 /**
- * 秒杀业务常量
+ * 秒杀相关常量
  */
 public class SeckillConstant {
 
-    // 秒杀活动状态
-    public static final Integer ACTIVITY_STATUS_NOT_STARTED = 0; // 未开始
-    public static final Integer ACTIVITY_STATUS_IN_PROGRESS = 1; // 进行中
-    public static final Integer ACTIVITY_STATUS_ENDED = 2;       // 已结束
-    public static final Integer ACTIVITY_STATUS_CANCELLED = 3;   // 已取消
+    // 秒杀订单号前缀
+    public static final String SECKILL_ORDER_PREFIX = "SK";
+    public static final String SECKILL_LOCK_PREFIX = "seckill:lock:";
+    public static final String SECKILL_CACHE_PREFIX = "seckill:cache:";
+    public static final String SECKILL_USER_LIMIT_PREFIX = "seckill:user:limit:";
 
-    // 秒杀商品状态
-    public static final Integer GOODS_STATUS_OFF_SHELF = 0; // 下架
-    public static final Integer GOODS_STATUS_ON_SHELF = 1;  // 上架
-
-    // 商品类型
-    public static final Integer GOODS_TYPE_DISH = 1;    // 菜品
-    public static final Integer GOODS_TYPE_SETMEAL = 2; // 套餐
-
-    // 订单支付状态
-    public static final Integer PAY_STATUS_UNPAID = 0;    // 未支付
-    public static final Integer PAY_STATUS_PAID = 1;      // 已支付
-    public static final Integer PAY_STATUS_TIMEOUT = 2; // 支付超时取消
+    // 商品状态
+    public static final Integer GOODS_STATUS_OFFLINE = 0;
+    public static final Integer GOODS_STATUS_ONLINE = 1;
 
     // 库存操作类型
-    public static final Integer STOCK_OP_DEDUCT = 1; // 扣减库存
-    public static final Integer STOCK_OP_RELEASE = 2;  // 释放库存
-    public static final Integer STOCK_OP_INIT = 3;     // 初始化库存
+    public static final Integer STOCK_OPERATION_DEDUCT = 1;
+    public static final Integer STOCK_OPERATION_RELEASE = 2;
+    public static final Integer STOCK_OPERATION_INIT = 3;
 
-    // 支付超时时间（秒）
-    public static final Integer PAY_TIME_LIMIT = 900; // 15分钟 = 900秒
-    
-    // 商品状态别名（为了兼容现有代码）
-    public static final Integer GOODS_STATUS_ON = GOODS_STATUS_ON_SHELF;
+    // 订单支付超时时间（分钟）
+    public static final Integer PAY_TIMEOUT_MINUTES = 15;
+    public static final String SECKILL_ORDER_TIMEOUT_KEY = "seckill:order:timeout:";
+    public static final String SECKILL_ACTIVITY_CACHE_KEY = "seckill:activity:";
+    public static final String SECKILL_GOODS_STOCK_KEY = "seckill:stock:";
+
+    // 库存缓存过期时间（秒）
+    public static final Long STOCK_CACHE_EXPIRE_SECONDS = 300L;
+
+    // 商品状态
+    public static final Integer GOODS_DISABLED = 0;
+    public static final Integer GOODS_ENABLED = 1;
+
 }
+

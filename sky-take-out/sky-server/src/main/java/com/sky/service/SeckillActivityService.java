@@ -1,12 +1,9 @@
 package com.sky.service;
 
 import com.sky.dto.SeckillActivityDTO;
-import com.sky.dto.SeckillActivityPageQueryDTO;
 import com.sky.result.PageResult;
 import com.sky.vo.SeckillActivityVO;
-import com.sky.vo.SeckillStatisticsVO;
 
-import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -15,11 +12,14 @@ import java.util.List;
 public interface SeckillActivityService {
 
     /**
-     * 分页查询秒杀活动
-     * @param seckillActivityPageQueryDTO
+     * 分页查询秒杀活动列表
+     * @param page
+     * @param pageSize
+     * @param name
+     * @param status
      * @return
      */
-    PageResult pageQuery(SeckillActivityPageQueryDTO seckillActivityPageQueryDTO);
+    PageResult pageQuery(int page, int pageSize, String name, Integer status);
 
     /**
      * 新增秒杀活动
@@ -40,14 +40,14 @@ public interface SeckillActivityService {
     void deleteById(Long id);
 
     /**
-     * 根据id查询秒杀活动详情
+     * 根据ID查询秒杀活动详情
      * @param id
      * @return
      */
     SeckillActivityVO getById(Long id);
 
     /**
-     * 启用或停用秒杀活动
+     * 启用/停用秒杀活动
      * @param status
      * @param id
      */
@@ -61,13 +61,10 @@ public interface SeckillActivityService {
 
     /**
      * 查询秒杀活动统计数据
-     * @param activityId
-     * @param beginDate
-     * @param endDate
+     * @param activityId 活动ID
+     * @param beginDate 开始日期
+     * @param endDate 结束日期
      * @return
      */
-    SeckillStatisticsVO getStatistics(Long activityId, LocalDate beginDate, LocalDate endDate);
+    Object getStatistics(Long activityId, String beginDate, String endDate);
 }
-
-
-

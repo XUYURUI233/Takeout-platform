@@ -3,6 +3,7 @@ E:\project\sky-take-out\sky-server\src\main\java\com\sky\controller\admin\Catego
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\controller\admin\SetmealController.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\controller\nofity\PayNotifyController.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\task\WebSocketTask.java
+E:\project\sky-take-out\sky-server\src\main\java\com\sky\service\impl\SeckillStockCacheServiceImpl.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\mapper\UserMapper.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\service\SeckillActivityService.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\controller\user\CategoryController.java
@@ -19,17 +20,20 @@ E:\project\sky-take-out\sky-server\src\main\java\com\sky\mapper\SeckillUserRecor
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\service\impl\WorkspaceServiceImpl.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\controller\user\SetmealController.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\config\WebMvcConfiguration.java
+E:\project\sky-take-out\sky-server\src\main\java\com\sky\service\impl\SeckillStockServiceImpl.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\controller\user\ShoppingCartController.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\service\SetmealService.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\config\WebSocketConfiguration.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\interceptor\JwtTokenAdminInterceptor.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\task\OrderTask.java
+E:\project\sky-take-out\sky-server\src\main\java\com\sky\service\SeckillStockRollbackService.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\mapper\SetmealMapper.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\service\ShoppingCartService.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\controller\user\ShopController.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\mapper\AddressBookMapper.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\service\impl\ReportServiceImpl.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\controller\admin\EmployeeController.java
+E:\project\sky-take-out\sky-server\src\main\java\com\sky\controller\admin\SeckillStockPerformanceController.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\mapper\OrderDetailMapper.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\service\impl\ShoppingCartServiceImpl.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\service\impl\SeckillActivityServiceImpl.java
@@ -38,6 +42,7 @@ E:\project\sky-take-out\sky-server\src\main\java\com\sky\controller\admin\Report
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\aspect\AutoFillAspect.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\service\impl\EmployeeServiceImpl.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\mapper\SetmealDishMapper.java
+E:\project\sky-take-out\sky-server\src\main\java\com\sky\controller\admin\SeckillStockRollbackController.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\mapper\CategoryMapper.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\interceptor\JwtTokenUserInterceptor.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\task\MyTask.java
@@ -49,6 +54,7 @@ E:\project\sky-take-out\sky-server\src\main\java\com\sky\websocket\WebSocketServ
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\service\impl\DishServiceImpl.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\controller\admin\WorkSpaceController.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\controller\admin\OrderController.java
+E:\project\sky-take-out\sky-server\src\main\java\com\sky\service\SeckillStockService.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\mapper\SeckillGoodsMapper.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\service\impl\OrderServiceImpl.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\service\ReportService.java
@@ -62,11 +68,13 @@ E:\project\sky-take-out\sky-server\src\main\java\com\sky\service\UserService.jav
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\controller\admin\ShopController.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\controller\user\UserController.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\config\JacksonConfig.java
+E:\project\sky-take-out\sky-server\src\main\java\com\sky\controller\admin\SeckillStockController.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\service\impl\SetmealServiceImpl.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\controller\admin\DishController.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\service\SeckillGoodsService.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\mapper\OrderMapper.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\service\DishService.java
+E:\project\sky-take-out\sky-server\src\main\java\com\sky\service\SeckillStockCacheService.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\controller\admin\SeckillController.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\controller\user\AddressBookController.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\service\EmployeeService.java
@@ -75,4 +83,5 @@ E:\project\sky-take-out\sky-server\src\main\java\com\sky\service\SeckillOrderSer
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\config\RedisConfiguration.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\controller\user\SeckillController.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\config\OssConfiguration.java
+E:\project\sky-take-out\sky-server\src\main\java\com\sky\service\impl\SeckillStockRollbackServiceImpl.java
 E:\project\sky-take-out\sky-server\src\main\java\com\sky\mapper\DishMapper.java

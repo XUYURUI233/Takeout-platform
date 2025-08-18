@@ -1,14 +1,16 @@
 package com.sky.controller.user;
 
-import com.sky.context.BaseContext;
-import com.sky.dto.SeckillOrderDTO;
-import com.sky.mapper.SeckillOrderMapper;
+import com.sky.dto.OrdersPaymentDTO;
+import com.sky.dto.SeckillOrderSubmitDTO;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.SeckillActivityService;
 import com.sky.service.SeckillGoodsService;
 import com.sky.service.SeckillOrderService;
-import com.sky.vo.*;
+import com.sky.vo.OrderPaymentVO;
+import com.sky.vo.SeckillActivityVO;
+import com.sky.vo.SeckillGoodsVO;
+import com.sky.vo.SeckillOrderSubmitVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -18,11 +20,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * ÓÃ»§¶ËÃëÉ±Ïà¹Ø½Ó¿Ú
+ * ç”¨æˆ·ç«¯ç§’æ€ç›¸å…³æ¥å£
  */
 @RestController("userSeckillController")
 @RequestMapping("/user/seckill")
-@Api(tags = "ÓÃ»§¶ËÃëÉ±Ïà¹Ø½Ó¿Ú")
+@Api(tags = "ç”¨æˆ·ç«¯ç§’æ€ç›¸å…³æ¥å£")
 @Slf4j
 public class SeckillController {
 
@@ -32,164 +34,139 @@ public class SeckillController {
     private SeckillGoodsService seckillGoodsService;
     @Autowired
     private SeckillOrderService seckillOrderService;
-    @Autowired
-    private SeckillOrderMapper seckillOrderMapper;
 
     /**
-     * ²éÑ¯½øĞĞÖĞµÄÃëÉ±»î¶¯
+     * æŸ¥è¯¢è¿›è¡Œä¸­çš„ç§’æ€æ´»åŠ¨
      * @return
      */
     @GetMapping("/activity/active")
-    @ApiOperation("²éÑ¯½øĞĞÖĞµÄÃëÉ±»î¶¯")
+    @ApiOperation("æŸ¥è¯¢è¿›è¡Œä¸­çš„ç§’æ€æ´»åŠ¨")
     public Result<List<SeckillActivityVO>> getActiveActivities() {
-        log.info("²éÑ¯½øĞĞÖĞµÄÃëÉ±»î¶¯");
-        List<SeckillActivityVO> list = seckillActivityService.getActiveActivities();
-        return Result.success(list);
+        log.info("æŸ¥è¯¢è¿›è¡Œä¸­çš„ç§’æ€æ´»åŠ¨");
+        List<SeckillActivityVO> activities = seckillActivityService.getActiveActivities();
+        return Result.success(activities);
     }
 
     /**
-     * ²éÑ¯ÃëÉ±»î¶¯ÉÌÆ·ÁĞ±í
+     * æŸ¥è¯¢ç§’æ€æ´»åŠ¨å•†å“åˆ—è¡¨
      * @param activityId
      * @return
      */
     @GetMapping("/activity/{activityId}/goods")
-    @ApiOperation("²éÑ¯ÃëÉ±»î¶¯ÉÌÆ·ÁĞ±í")
+    @ApiOperation("æŸ¥è¯¢ç§’æ€æ´»åŠ¨å•†å“åˆ—è¡¨")
     public Result<List<SeckillGoodsVO>> getActivityGoods(@PathVariable Long activityId) {
-        log.info("²éÑ¯ÃëÉ±»î¶¯ÉÌÆ·ÁĞ±í£º{}", activityId);
-        List<SeckillGoodsVO> list = seckillGoodsService.getByActivityId(activityId);
-        return Result.success(list);
+        log.info("æŸ¥è¯¢ç§’æ€æ´»åŠ¨å•†å“åˆ—è¡¨ï¼š{}", activityId);
+        List<SeckillGoodsVO> goods = seckillGoodsService.getByActivityId(activityId);
+        return Result.success(goods);
     }
 
     /**
-     * ²éÑ¯ÃëÉ±ÉÌÆ·ÏêÇé
+     * æŸ¥è¯¢ç§’æ€å•†å“è¯¦æƒ…
      * @param id
      * @return
      */
     @GetMapping("/goods/{id}")
-    @ApiOperation("²éÑ¯ÃëÉ±ÉÌÆ·ÏêÇé")
-    public Result<SeckillGoodsVO> getGoodsById(@PathVariable Long id) {
-        log.info("²éÑ¯ÃëÉ±ÉÌÆ·ÏêÇé£º{}", id);
-        SeckillGoodsVO seckillGoodsVO = seckillGoodsService.getById(id);
-        return Result.success(seckillGoodsVO);
+    @ApiOperation("æŸ¥è¯¢ç§’æ€å•†å“è¯¦æƒ…")
+    public Result<SeckillGoodsVO> getSeckillGoodsDetail(@PathVariable Long id) {
+        log.info("æŸ¥è¯¢ç§’æ€å•†å“è¯¦æƒ…ï¼š{}", id);
+        SeckillGoodsVO goods = seckillGoodsService.getById(id);
+        return Result.success(goods);
     }
 
     /**
-     * Á¢¼´¹ºÂò£¨Éú³ÉÃëÉ±¶©µ¥£©
-     * @param seckillOrderDTO
+     * æäº¤ç§’æ€è®¢å•
+     * @param seckillOrderSubmitDTO
      * @return
      */
     @PostMapping("/order/submit")
-    @ApiOperation("Á¢¼´¹ºÂò£¨Éú³ÉÃëÉ±¶©µ¥£©")
-    public Result<SeckillOrderSubmitVO> submitOrder(@RequestBody SeckillOrderDTO seckillOrderDTO) {
-        log.info("ÓÃ»§Ìá½»ÃëÉ±¶©µ¥£º{}", seckillOrderDTO);
-        SeckillOrderSubmitVO seckillOrderSubmitVO = seckillOrderService.submitOrder(seckillOrderDTO);
-        return Result.success(seckillOrderSubmitVO);
+    @ApiOperation("æäº¤ç§’æ€è®¢å•")
+    public Result<SeckillOrderSubmitVO> submitOrder(@RequestBody SeckillOrderSubmitDTO seckillOrderSubmitDTO) {
+        log.info("æäº¤ç§’æ€è®¢å•ï¼š{}", seckillOrderSubmitDTO);
+        SeckillOrderSubmitVO result = seckillOrderService.submitOrder(seckillOrderSubmitDTO);
+        return Result.success(result);
     }
 
     /**
-     * ÃëÉ±¶©µ¥Ö§¸¶
-     * @param orderNumber
-     * @param payMethod
+     * ç§’æ€è®¢å•æ”¯ä»˜
+     * @param ordersPaymentDTO
      * @return
      */
     @PutMapping("/order/payment")
-    @ApiOperation("ÃëÉ±¶©µ¥Ö§¸¶")
-    public Result<String> payment(@RequestParam String orderNumber, @RequestParam Integer payMethod) {
-        log.info("ÃëÉ±¶©µ¥Ö§¸¶£º{}£¬{}", orderNumber, payMethod);
-        seckillOrderService.payment(orderNumber, payMethod);
-        return Result.success();
+    @ApiOperation("ç§’æ€è®¢å•æ”¯ä»˜")
+    public Result<OrderPaymentVO> payment(@RequestBody OrdersPaymentDTO ordersPaymentDTO) throws Exception {
+        log.info("ç§’æ€è®¢å•æ”¯ä»˜ï¼š{}", ordersPaymentDTO);
+        OrderPaymentVO orderPaymentVO = seckillOrderService.payment(ordersPaymentDTO);
+        return Result.success(orderPaymentVO);
     }
 
     /**
-     * È¡ÏûÃëÉ±¶©µ¥
-     * @param id
-     * @return
-     */
-    @PutMapping("/order/cancel/{id}")
-    @ApiOperation("È¡ÏûÃëÉ±¶©µ¥")
-    public Result<String> cancelOrder(@PathVariable Long id) {
-        log.info("ÓÃ»§È¡ÏûÃëÉ±¶©µ¥£º{}", id);
-        seckillOrderService.cancelOrder(id);
-        return Result.success();
-    }
-
-    /**
-     * ²éÑ¯ÓÃ»§ÃëÉ±¶©µ¥ÁĞ±í
+     * æŸ¥è¯¢ç”¨æˆ·ç§’æ€è®¢å•åˆ—è¡¨
      * @param page
      * @param pageSize
      * @param status
      * @return
      */
     @GetMapping("/order/list")
-    @ApiOperation("²éÑ¯ÓÃ»§ÃëÉ±¶©µ¥ÁĞ±í")
-    public Result<PageResult> getOrderList(@RequestParam(defaultValue = "1") Integer page,
-                                          @RequestParam(defaultValue = "10") Integer pageSize,
-                                          @RequestParam(required = false) Integer status) {
-        log.info("²éÑ¯ÓÃ»§ÃëÉ±¶©µ¥ÁĞ±í£º{}£¬{}£¬{}", page, pageSize, status);
-        PageResult pageResult = seckillOrderService.userPageQuery(page, pageSize, status);
+    @ApiOperation("æŸ¥è¯¢ç”¨æˆ·ç§’æ€è®¢å•åˆ—è¡¨")
+    public Result<PageResult> getUserSeckillOrders(@RequestParam(defaultValue = "1") int page,
+                                                   @RequestParam(defaultValue = "10") int pageSize,
+                                                   @RequestParam(required = false) Integer status) {
+        log.info("æŸ¥è¯¢ç”¨æˆ·ç§’æ€è®¢å•åˆ—è¡¨ï¼špage={}, pageSize={}, status={}", page, pageSize, status);
+        PageResult pageResult = seckillOrderService.pageQueryByUser(page, pageSize, status);
         return Result.success(pageResult);
     }
 
     /**
-     * ²éÑ¯ÃëÉ±¶©µ¥ÏêÇé
+     * æŸ¥è¯¢ç§’æ€è®¢å•è¯¦æƒ…
      * @param id
      * @return
      */
     @GetMapping("/order/details/{id}")
-    @ApiOperation("²éÑ¯ÃëÉ±¶©µ¥ÏêÇé")
-    public Result<SeckillOrderVO> getOrderDetails(@PathVariable Long id) {
-        log.info("²éÑ¯ÓÃ»§ÃëÉ±¶©µ¥ÏêÇé£º{}", id);
-        SeckillOrderVO seckillOrderVO = seckillOrderService.getUserOrderDetails(id);
-        return Result.success(seckillOrderVO);
+    @ApiOperation("æŸ¥è¯¢ç§’æ€è®¢å•è¯¦æƒ…")
+    public Result<Object> getOrderDetail(@PathVariable Long id) {
+        log.info("æŸ¥è¯¢ç§’æ€è®¢å•è¯¦æƒ…ï¼š{}", id);
+        Object orderDetail = seckillOrderService.getOrderDetail(id);
+        return Result.success(orderDetail);
     }
 
     /**
-     * ÔÙÀ´Ò»µ¥
+     * å–æ¶ˆç§’æ€è®¢å•
+     * @param id
+     * @return
+     */
+    @PutMapping("/order/cancel/{id}")
+    @ApiOperation("å–æ¶ˆç§’æ€è®¢å•")
+    public Result<Void> cancelOrder(@PathVariable Long id) {
+        log.info("å–æ¶ˆç§’æ€è®¢å•ï¼š{}", id);
+        seckillOrderService.cancelOrder(id);
+        return Result.success();
+    }
+
+    /**
+     * å†æ¥ä¸€å•
      * @param id
      * @return
      */
     @PostMapping("/order/again/{id}")
-    @ApiOperation("ÔÙÀ´Ò»µ¥")
-    public Result<SeckillOrderSubmitVO> againOrder(@PathVariable Long id) {
-        log.info("ÔÙÀ´Ò»µ¥£º{}", id);
-        SeckillOrderSubmitVO seckillOrderSubmitVO = seckillOrderService.againOrder(id);
-        return Result.success(seckillOrderSubmitVO);
+    @ApiOperation("å†æ¥ä¸€å•")
+    public Result<SeckillOrderSubmitVO> repeatOrder(@PathVariable Long id) {
+        log.info("å†æ¥ä¸€å•ï¼š{}", id);
+        SeckillOrderSubmitVO result = seckillOrderService.repeatOrder(id);
+        return Result.success(result);
     }
 
     /**
-     * ¼ì²éÓÃ»§¹ºÂò×Ê¸ñ
+     * æ£€æŸ¥ç”¨æˆ·è´­ä¹°èµ„æ ¼
      * @param seckillGoodsId
      * @param quantity
      * @return
      */
     @GetMapping("/check/eligibility")
-    @ApiOperation("¼ì²éÓÃ»§¹ºÂò×Ê¸ñ")
-    public Result<SeckillEligibilityVO> checkEligibility(@RequestParam Long seckillGoodsId,
-                                                        @RequestParam Integer quantity) {
-        log.info("¼ì²éÓÃ»§¹ºÂò×Ê¸ñ£º{}£¬{}", seckillGoodsId, quantity);
-        boolean canPurchase = seckillGoodsService.checkEligibility(seckillGoodsId, quantity);
-        
-        // ¹¹½¨·µ»ØµÄVO¶ÔÏó
-        SeckillEligibilityVO eligibilityVO = new SeckillEligibilityVO();
-        eligibilityVO.setCanPurchase(canPurchase);
-        
-        if (canPurchase) {
-            // »ñÈ¡ÉÌÆ·ĞÅÏ¢
-            SeckillGoodsVO goods = seckillGoodsService.getById(seckillGoodsId);
-            if (goods != null) {
-                eligibilityVO.setLimitCount(goods.getLimitCount());
-                eligibilityVO.setAvailableStock(goods.getAvailableStock());
-                
-                // »ñÈ¡ÓÃ»§ÒÑ¹ºÂòÊıÁ¿
-                Long userId = BaseContext.getCurrentId();
-                if (userId != null) {
-                    Integer userBoughtCount = seckillOrderMapper.getUserBoughtCount(seckillGoodsId, userId);
-                    eligibilityVO.setUserPurchased(userBoughtCount != null ? userBoughtCount : 0);
-                    eligibilityVO.setRemainingQuota(goods.getLimitCount() - eligibilityVO.getUserPurchased());
-                }
-            }
-        }
-        
-        return Result.success(eligibilityVO);
+    @ApiOperation("æ£€æŸ¥ç”¨æˆ·è´­ä¹°èµ„æ ¼")
+    public Result<Object> checkEligibility(@RequestParam Long seckillGoodsId,
+                                          @RequestParam Integer quantity) {
+        log.info("æ£€æŸ¥ç”¨æˆ·è´­ä¹°èµ„æ ¼ï¼šseckillGoodsId={}, quantity={}", seckillGoodsId, quantity);
+        Object eligibility = seckillGoodsService.checkEligibility(seckillGoodsId, quantity);
+        return Result.success(eligibility);
     }
 }

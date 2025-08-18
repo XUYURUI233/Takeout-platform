@@ -1,6 +1,7 @@
 package com.sky.dto;
 
 import lombok.Data;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -10,16 +11,18 @@ import java.time.LocalDateTime;
 @Data
 public class SeckillActivityPageQueryDTO implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     // 页码
     private int page;
 
-    // 页面大小
+    // 每页记录数
     private int pageSize;
 
     // 活动名称
     private String name;
 
-    // 活动状态
+    // 状态
     private Integer status;
 
     // 开始时间
@@ -27,7 +30,5 @@ public class SeckillActivityPageQueryDTO implements Serializable {
 
     // 结束时间
     private LocalDateTime endTime;
+
 }
-
-
-

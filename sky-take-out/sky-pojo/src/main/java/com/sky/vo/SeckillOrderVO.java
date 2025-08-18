@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * 秒杀订单VO
+ * Seckill Order VO
  */
 @Data
 @Builder
@@ -18,77 +18,77 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class SeckillOrderVO implements Serializable {
 
-    // 订单ID
+    // Order ID
     private Long id;
 
-    // 订单号
+    // Order number
     private String number;
 
-    // 用户ID
+    // User ID
     private Long userId;
 
-    // 下单时间
+    // Order time
     private LocalDateTime orderTime;
 
-    // 结账时间
+    // Checkout time
     private LocalDateTime checkoutTime;
 
-    // 支付方式
+    // Payment method
     private Integer payMethod;
 
-    // 支付状态
+    // Payment status
     private Integer payStatus;
 
-    // 订单金额
+    // Order amount
     private BigDecimal amount;
 
-    // 备注
+    // Remark
     private String remark;
 
-    // 手机号
+    // Phone number
     private String phone;
 
-    // 地址
+    // Address
     private String address;
 
-    // 收货人
+    // Consignee
     private String consignee;
 
-    // 预计送达时间
+    // Estimated delivery time
     private LocalDateTime estimatedDeliveryTime;
 
-    // 秒杀信息
+    // Seckill info
     private SeckillInfo seckillInfo;
 
-    // 秒杀信息内部类
+    // Seckill info inner class
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SeckillInfo implements Serializable {
         
-        // 活动ID
+        // Activity ID
         private Long activityId;
         
-        // 活动名称
+        // Activity name
         private String activityName;
         
-        // 秒杀商品ID
+        // Seckill goods ID
         private Long seckillGoodsId;
         
-        // 商品名称
+        // Goods name
         private String goodsName;
         
-        // 商品图片
+        // Goods image
         private String goodsImage;
         
-        // 原价
+        // Original price
         private BigDecimal originalPrice;
         
-        // 秒杀价
+        // Seckill price
         private BigDecimal seckillPrice;
         
-        // 购买数量
+        // Quantity
         private Integer quantity;
     }
 }

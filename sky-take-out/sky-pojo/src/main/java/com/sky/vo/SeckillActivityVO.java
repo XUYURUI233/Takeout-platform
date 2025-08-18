@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,25 +18,27 @@ import java.util.List;
 @AllArgsConstructor
 public class SeckillActivityVO implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private Long id;
 
-    // 秒杀活动名称
+    // 活动名称
     private String name;
 
     // 活动图片
     private String image;
 
-    // 秒杀开始时间
+    // 开始时间
     private LocalDateTime startTime;
 
-    // 秒杀结束时间
+    // 结束时间
     private LocalDateTime endTime;
-
-    // 活动状态 0:未开始 1:进行中 2:已结束 3:已取消
-    private Integer status;
 
     // 活动描述
     private String description;
+
+    // 活动状态 0:未开始 1:进行中 2:已结束 3:已取消
+    private Integer status;
 
     // 创建时间
     private LocalDateTime createTime;
@@ -49,9 +52,6 @@ public class SeckillActivityVO implements Serializable {
     // 剩余时间（秒）
     private Long remainingTime;
 
-    // 秒杀商品列表
+    // 商品列表
     private List<SeckillGoodsVO> goodsList;
 }
-
-
-

@@ -4,17 +4,20 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
- * 秒杀活动统计VO
+ * 秒杀统计VO
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class SeckillStatisticsVO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     // 总订单数
     private Integer totalOrders;
@@ -33,7 +36,5 @@ public class SeckillStatisticsVO implements Serializable {
 
     // 成功率
     private Double successRate;
+
 }
-
-
-

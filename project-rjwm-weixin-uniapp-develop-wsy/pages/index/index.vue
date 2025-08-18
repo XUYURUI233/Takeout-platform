@@ -35,6 +35,12 @@
                 <icon></icon>
                 {{ shopInfo().shopAddress || "商家店铺获取中.." }}
               </view>
+              
+              <!-- 秒杀活动横幅 - 在店铺信息卡片内部，不超出边界 -->
+              <view class="seckill-banner-wrapper-in-card">
+                <seckill-banner></seckill-banner>
+              </view>
+              
             </view>
             <view>
               <view class="phone" @click="handlePhone('bottom')">
@@ -45,6 +51,9 @@
         </view>
       </view>
       <!-- end -->
+      
+      <!-- 横幅已移动到店铺信息卡片内部 -->
+      
       <!-- 菜单列表 -->
       <view class="restaurant_menu_list" v-if="shopStatus === 1">
         <view class="type_list">

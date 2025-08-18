@@ -1,50 +1,36 @@
 package com.sky.mapper;
 
-import com.sky.annotation.AutoFill;
 import com.sky.entity.SeckillGoods;
-import com.sky.enumeration.OperationType;
-import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
-/**
- * 秒杀商品Mapper接口
- */
 @Mapper
 public interface SeckillGoodsMapper {
 
     /**
-     * 批量插入秒杀商品
+     * 插入秒杀商品数据
+     * @param seckillGoods
+     */
+    void insert(SeckillGoods seckillGoods);
+
+    /**
+     * 批量插入秒杀商品数据
      * @param seckillGoodsList
      */
     void insertBatch(List<SeckillGoods> seckillGoodsList);
 
     /**
-     * 修改秒杀商品
-     * @param seckillGoods
-     */
-    @AutoFill(value = OperationType.UPDATE)
-    void update(SeckillGoods seckillGoods);
-
-    /**
-     * 根据id删除秒杀商品
-     * @param id
-     */
-    @Delete("delete from seckill_goods where id = #{id}")
-    void deleteById(Long id);
-
-    /**
-     * 根据活动id删除秒杀商品
+     * 根据活动ID查询秒杀商品列表
      * @param activityId
+     * @return
      */
-    @Delete("delete from seckill_goods where activity_id = #{activityId}")
-    void deleteByActivityId(Long activityId);
+    @Select("select * from seckill_goods where activity_id = #{activityId} and status = 1")
+    List<SeckillGoods> getByActivityId(Long activityId);
 
     /**
-     * 根据id查询秒杀商品
+     * 根据ID查询秒杀商品
      * @param id
      * @return
      */
@@ -52,44 +38,61 @@ public interface SeckillGoodsMapper {
     SeckillGoods getById(Long id);
 
     /**
-     * 根据活动id查询秒杀商品列表
-     * @param activityId
-     * @return
+     * 更新秒杀商品
+     * @param seckillGoods
      */
-    @Select("select * from seckill_goods where activity_id = #{activityId} and status = 1 order by create_time asc")
-    List<SeckillGoods> getByActivityId(Long activityId);
+    void update(SeckillGoods seckillGoods);
+
+    /**
+     * 删除秒杀商品
+     * @param id
+     */
+    @Select("delete from seckill_goods where id = #{id}")
+    void deleteById(Long id);
+
+    /**
+     * 根据活动ID删除秒杀商品
+     * @param activityId
+     */
+    @Select("delete from seckill_goods where activity_id = #{activityId}")
+    void deleteByActivityId(Long activityId);
 
     /**
      * 扣减库存（乐观锁）
-     * @param seckillGoodsId
+     * @param id
      * @param quantity
      * @param version
      * @return
      */
-    @Update("update seckill_goods set available_stock = available_stock - #{quantity}, " +
-            "sold_count = sold_count + #{quantity}, version = version + 1, update_time = now() " +
-            "where id = #{seckillGoodsId} and available_stock >= #{quantity} and version = #{version} and status = 1")
-    int deductStock(Long seckillGoodsId, Integer quantity, Integer version);
+    int deductStock(Long id, Integer quantity, Integer version);
 
     /**
-     * 释放库存
-     * @param seckillGoodsId
-     * @param quantity
+     * 批量查询秒杀商品库存信息（性能优化）
+     * @param goodsIds
      * @return
      */
-    @Update("update seckill_goods set available_stock = available_stock + #{quantity}, " +
-            "sold_count = sold_count - #{quantity}, version = version + 1, update_time = now() " +
-            "where id = #{seckillGoodsId}")
-    int releaseStock(Long seckillGoodsId, Integer quantity);
+    List<SeckillGoods> getStockInfoByIds(List<Long> goodsIds);
 
     /**
-     * 查询可用商品列表（菜品和套餐）
-     * @param goodsType
-     * @param name
+     * 查询低库存商品（库存小于指定数量）
+     * @param threshold 库存阈值
+     * @param activityId 活动ID（可选）
      * @return
      */
-    List<com.sky.vo.AvailableGoodsVO> getAvailableGoods(Integer goodsType, String name);
+    List<SeckillGoods> getLowStockGoods(Integer threshold, Long activityId);
+
+    /**
+     * 批量更新商品版本号（防止ABA问题）
+     * @param goodsIds
+     * @return
+     */
+    int batchUpdateVersion(List<Long> goodsIds);
+
+    /**
+     * 获取商品库存快照（用于缓存）
+     * @param goodsId
+     * @return
+     */
+    @Select("select id, available_stock, sold_count, version, update_time from seckill_goods where id = #{goodsId}")
+    SeckillGoods getStockSnapshot(Long goodsId);
 }
-
-
-

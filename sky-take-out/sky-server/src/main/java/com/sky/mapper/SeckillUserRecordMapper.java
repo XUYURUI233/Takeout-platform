@@ -1,46 +1,55 @@
 package com.sky.mapper;
 
+import com.sky.annotation.AutoFill;
 import com.sky.entity.SeckillUserRecord;
-import org.apache.ibatis.annotations.Insert;
+import com.sky.enumeration.OperationType;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
 
 /**
- * 秒杀用户购买记录Mapper接口
+ * 秒杀用户记录Mapper接口
  */
 @Mapper
 public interface SeckillUserRecordMapper {
 
     /**
-     * 插入用户购买记录
+     * 根据用户ID和商品ID查询购买记录
+     * @param userId 用户ID
+     * @param seckillGoodsId 秒杀商品ID
+     * @return
+     */
+    @Select("select * from seckill_user_record where user_id = #{userId} and seckill_goods_id = #{seckillGoodsId}")
+    SeckillUserRecord getByUserIdAndGoodsId(Long userId, Long seckillGoodsId);
+
+    /**
+     * 根据用户ID和秒杀商品ID查询购买记录（别名方法，保持兼容性）
+     * @param userId 用户ID
+     * @param seckillGoodsId 秒杀商品ID
+     * @return
+     */
+    default SeckillUserRecord getByUserIdAndSeckillGoodsId(Long userId, Long seckillGoodsId) {
+        return getByUserIdAndGoodsId(userId, seckillGoodsId);
+    }
+
+    /**
+     * 新增用户购买记录
      * @param seckillUserRecord
      */
-    @Insert("insert into seckill_user_record (activity_id, seckill_goods_id, user_id, quantity, create_time, update_time) " +
-            "values (#{activityId}, #{seckillGoodsId}, #{userId}, #{quantity}, #{createTime}, #{updateTime})")
+    @AutoFill(OperationType.INSERT)
     void insert(SeckillUserRecord seckillUserRecord);
 
     /**
-     * 查询用户购买记录
-     * @param activityId
-     * @param seckillGoodsId
-     * @param userId
-     * @return
+     * 更新用户购买记录
+     * @param seckillUserRecord
      */
-    @Select("select * from seckill_user_record where activity_id = #{activityId} and seckill_goods_id = #{seckillGoodsId} and user_id = #{userId}")
-    SeckillUserRecord getByActivityGoodsUser(Long activityId, Long seckillGoodsId, Long userId);
+    @AutoFill(OperationType.UPDATE)
+    void update(SeckillUserRecord seckillUserRecord);
 
     /**
-     * 更新用户购买数量
-     * @param activityId
-     * @param seckillGoodsId
-     * @param userId
-     * @param quantity
+     * 插入或更新用户购买记录（使用ON DUPLICATE KEY UPDATE避免并发问题）
+     * @param seckillUserRecord
      */
-    @Update("update seckill_user_record set quantity = quantity + #{quantity}, update_time = now() " +
-            "where activity_id = #{activityId} and seckill_goods_id = #{seckillGoodsId} and user_id = #{userId}")
-    void updateQuantity(Long activityId, Long seckillGoodsId, Long userId, Integer quantity);
+    @AutoFill(OperationType.INSERT)
+    void insertOrUpdate(SeckillUserRecord seckillUserRecord);
 }
-
-
 

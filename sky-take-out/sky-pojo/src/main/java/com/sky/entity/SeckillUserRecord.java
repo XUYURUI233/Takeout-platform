@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 秒杀用户购买记录表
+ * 秒杀用户记录实体类
  */
 @Data
 @Builder
@@ -21,7 +21,7 @@ public class SeckillUserRecord implements Serializable {
 
     private Long id;
 
-    // 秒杀活动ID
+    // 活动ID
     private Long activityId;
 
     // 秒杀商品ID
@@ -39,6 +39,3 @@ public class SeckillUserRecord implements Serializable {
     // 更新时间
     private LocalDateTime updateTime;
 }
-
-
-

@@ -18,7 +18,7 @@
     }
   },
   "compileType": "miniprogram",
-  "libVersion": "",
+  "libVersion": "2.26.2",
   "appid": "wx7c49bba0c271f7c6",
   "projectname": "sky-take-out-user-mp",
   "condition": {

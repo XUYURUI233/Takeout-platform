@@ -1,0 +1,230 @@
+@charset "UTF-8";
+/**
+ * 这里是uni-app内置的常用样式变量
+ *
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ *
+ */
+/**
+ * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ *
+ * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ */
+/* 颜色变量 */
+/* 行为相关颜色 */
+/* 文字基本颜色 */
+/* 背景颜色 */
+/* 边框颜色 */
+/* 尺寸变量 */
+/* 文字尺寸 */
+/* 图片尺寸 */
+/* Border Radius */
+/* 水平间距 */
+/* 垂直间距 */
+/* 透明度 */
+/* 文章场景相关 */
+.seckill_order_detail.data-v-3f1c0846 {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding-bottom: 120rpx;
+}
+.seckill_order_detail .content.data-v-3f1c0846 {
+  padding: 20rpx;
+}
+.seckill_order_detail .status_section.data-v-3f1c0846 {
+  background: linear-gradient(135deg, #ff6b6b, #ff4d4f);
+  border-radius: 12rpx;
+  padding: 40rpx;
+  margin-bottom: 20rpx;
+  display: flex;
+  align-items: center;
+  color: white;
+}
+.seckill_order_detail .status_section .status_icon.data-v-3f1c0846 {
+  width: 80rpx;
+  height: 80rpx;
+  margin-right: 24rpx;
+}
+.seckill_order_detail .status_section .status_icon image.data-v-3f1c0846 {
+  width: 100%;
+  height: 100%;
+}
+.seckill_order_detail .status_section .status_text.data-v-3f1c0846 {
+  flex: 1;
+}
+.seckill_order_detail .status_section .status_text .status_title.data-v-3f1c0846 {
+  font-size: 32rpx;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 8rpx;
+}
+.seckill_order_detail .status_section .status_text .status_desc.data-v-3f1c0846 {
+  font-size: 24rpx;
+  opacity: 0.9;
+}
+.seckill_order_detail .goods_section.data-v-3f1c0846,
+.seckill_order_detail .delivery_section.data-v-3f1c0846,
+.seckill_order_detail .order_section.data-v-3f1c0846,
+.seckill_order_detail .cost_section.data-v-3f1c0846 {
+  background: #fff;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+}
+.seckill_order_detail .goods_section .section_title.data-v-3f1c0846,
+.seckill_order_detail .delivery_section .section_title.data-v-3f1c0846,
+.seckill_order_detail .order_section .section_title.data-v-3f1c0846,
+.seckill_order_detail .cost_section .section_title.data-v-3f1c0846 {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 24rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 1px solid #f5f5f5;
+}
+.seckill_order_detail .goods_section .goods_item.data-v-3f1c0846 {
+  display: flex;
+  align-items: center;
+}
+.seckill_order_detail .goods_section .goods_item .goods_image.data-v-3f1c0846 {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 8rpx;
+  overflow: hidden;
+  margin-right: 20rpx;
+}
+.seckill_order_detail .goods_section .goods_item .goods_image image.data-v-3f1c0846 {
+  width: 100%;
+  height: 100%;
+}
+.seckill_order_detail .goods_section .goods_item .goods_detail.data-v-3f1c0846 {
+  flex: 1;
+}
+.seckill_order_detail .goods_section .goods_item .goods_detail .activity_tag.data-v-3f1c0846 {
+  font-size: 20rpx;
+  color: #ff4d4f;
+  background: #fff2f0;
+  padding: 4rpx 8rpx;
+  border-radius: 4rpx;
+  display: inline-block;
+  margin-bottom: 8rpx;
+}
+.seckill_order_detail .goods_section .goods_item .goods_detail .goods_name.data-v-3f1c0846 {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 12rpx;
+}
+.seckill_order_detail .goods_section .goods_item .goods_detail .price_info .seckill_price.data-v-3f1c0846 {
+  font-size: 28rpx;
+  color: #ff4d4f;
+  font-weight: 600;
+  margin-right: 16rpx;
+}
+.seckill_order_detail .goods_section .goods_item .goods_detail .price_info .original_price.data-v-3f1c0846 {
+  font-size: 24rpx;
+  color: #999;
+  text-decoration: line-through;
+}
+.seckill_order_detail .goods_section .goods_item .quantity.data-v-3f1c0846 {
+  font-size: 24rpx;
+  color: #666;
+}
+.seckill_order_detail .delivery_section .delivery_info .address_info.data-v-3f1c0846 {
+  margin-bottom: 16rpx;
+}
+.seckill_order_detail .delivery_section .delivery_info .address_info .consignee.data-v-3f1c0846 {
+  margin-bottom: 8rpx;
+}
+.seckill_order_detail .delivery_section .delivery_info .address_info .consignee .name.data-v-3f1c0846 {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+  margin-right: 20rpx;
+}
+.seckill_order_detail .delivery_section .delivery_info .address_info .consignee .phone.data-v-3f1c0846 {
+  font-size: 24rpx;
+  color: #666;
+}
+.seckill_order_detail .delivery_section .delivery_info .address_info .address.data-v-3f1c0846 {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.4;
+}
+.seckill_order_detail .delivery_section .delivery_info .delivery_time.data-v-3f1c0846 {
+  font-size: 24rpx;
+  color: #666;
+}
+.seckill_order_detail .delivery_section .delivery_info .delivery_time .label.data-v-3f1c0846 {
+  margin-right: 8rpx;
+}
+.seckill_order_detail .delivery_section .delivery_info .delivery_time .time.data-v-3f1c0846 {
+  color: #ff4d4f;
+}
+.seckill_order_detail .order_section .order_info .info_item.data-v-3f1c0846 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12rpx 0;
+  font-size: 26rpx;
+}
+.seckill_order_detail .order_section .order_info .info_item .label.data-v-3f1c0846 {
+  color: #666;
+}
+.seckill_order_detail .order_section .order_info .info_item .value.data-v-3f1c0846 {
+  color: #333;
+  text-align: right;
+  flex: 1;
+  margin-left: 20rpx;
+}
+.seckill_order_detail .cost_section .cost_info .cost_item.data-v-3f1c0846 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12rpx 0;
+  font-size: 26rpx;
+}
+.seckill_order_detail .cost_section .cost_info .cost_item .label.data-v-3f1c0846 {
+  color: #666;
+}
+.seckill_order_detail .cost_section .cost_info .cost_item .value.data-v-3f1c0846 {
+  color: #333;
+}
+.seckill_order_detail .cost_section .cost_info .cost_item.total.data-v-3f1c0846 {
+  border-top: 1px solid #f5f5f5;
+  margin-top: 12rpx;
+  padding-top: 24rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+}
+.seckill_order_detail .cost_section .cost_info .cost_item.total .value.data-v-3f1c0846 {
+  color: #ff4d4f;
+}
+.seckill_order_detail .bottom_actions.data-v-3f1c0846 {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  padding: 20rpx;
+  border-top: 1px solid #f5f5f5;
+  display: flex;
+  gap: 20rpx;
+}
+.seckill_order_detail .bottom_actions .action_btn.data-v-3f1c0846 {
+  flex: 1;
+  height: 80rpx;
+  line-height: 80rpx;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  border: none;
+}
+.seckill_order_detail .bottom_actions .action_btn.cancel_btn.data-v-3f1c0846 {
+  background: #f5f5f5;
+  color: #666;
+}
+.seckill_order_detail .bottom_actions .action_btn.pay_btn.data-v-3f1c0846 {
+  background: #ff4d4f;
+  color: #fff;
+}

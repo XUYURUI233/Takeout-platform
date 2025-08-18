@@ -1,23 +1,28 @@
 package com.sky.service;
 
 import com.sky.dto.SeckillGoodsDTO;
-import com.sky.entity.SeckillGoods;
 import com.sky.vo.SeckillGoodsVO;
 
 import java.util.List;
 
 /**
- * 秒杀商品业务接口
+ * 秒杀商品Service接口
  */
 public interface SeckillGoodsService {
 
     /**
-     * 查询可用商品列表
-     * @param type
-     * @param name
+     * 根据活动ID查询秒杀商品列表
+     * @param activityId
      * @return
      */
-    List<SeckillGoodsVO> getAvailableGoods(Integer type, String name);
+    List<SeckillGoodsVO> getByActivityId(Long activityId);
+
+    /**
+     * 根据ID查询秒杀商品详情
+     * @param id
+     * @return
+     */
+    SeckillGoodsVO getById(Long id);
 
     /**
      * 修改秒杀商品信息
@@ -32,12 +37,12 @@ public interface SeckillGoodsService {
     void deleteById(Long id);
 
     /**
-     * 扣减库存（别名方法）
-     * @param seckillGoodsId
-     * @param quantity
+     * 查询可用商品列表
+     * @param type
+     * @param name
      * @return
      */
-    boolean deductStock(Long seckillGoodsId, Integer quantity);
+    List<SeckillGoodsVO> getAvailableGoods(Integer type, String name);
 
     /**
      * 检查用户购买资格
@@ -45,42 +50,5 @@ public interface SeckillGoodsService {
      * @param quantity
      * @return
      */
-    boolean checkEligibility(Long seckillGoodsId, Integer quantity);
-
-    /**
-     * 根据活动ID查询商品列表
-     * @param activityId
-     * @return
-     */
-    List<SeckillGoodsVO> getByActivityId(Long activityId);
-
-    /**
-     * 根据ID查询秒杀商品详情
-     * @param id
-     * @return
-     */
-    SeckillGoodsVO getById(Long id);
-
-    /**
-     * 检查商品库存
-     * @param seckillGoodsId
-     * @param quantity
-     * @return
-     */
-    boolean checkStock(Long seckillGoodsId, Integer quantity);
-
-    /**
-     * 扣减库存
-     * @param seckillGoodsId
-     * @param quantity
-     * @return
-     */
-    boolean decreaseStock(Long seckillGoodsId, Integer quantity);
-
-    /**
-     * 释放库存
-     * @param seckillGoodsId
-     * @param quantity
-     */
-    void releaseStock(Long seckillGoodsId, Integer quantity);
+    Object checkEligibility(Long seckillGoodsId, Integer quantity);
 }

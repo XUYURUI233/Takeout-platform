@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
- * ÃëÉ±Ïà¹Ø¶¨Ê±ÈÎÎñ
+ * ç§’æ€ç›¸å…³å®šæ—¶ä»»åŠ¡
  */
 @Component
 @Slf4j
@@ -17,14 +17,14 @@ public class SeckillTask {
     private SeckillOrderService seckillOrderService;
 
     /**
-     * ´¦Àí³¬Ê±Î´Ö§¸¶µÄÃëÉ±¶©µ¥
-     * Ã¿·ÖÖÓÖ´ĞĞÒ»´Î
+     * å¤„ç†è¶…æ—¶æœªæ”¯ä»˜çš„ç§’æ€è®¢å•
+     * æ¯åˆ†é’Ÿæ‰§è¡Œä¸€æ¬¡
      */
     @Scheduled(cron = "0 * * * * ?")
     public void processExpiredOrders() {
-        log.info("¿ªÊ¼´¦Àí³¬Ê±Î´Ö§¸¶µÄÃëÉ±¶©µ¥");
+        log.info("å¼€å§‹å¤„ç†è¶…æ—¶æœªæ”¯ä»˜çš„ç§’æ€è®¢å•");
         seckillOrderService.handleExpiredOrders();
-        log.info("´¦Àí³¬Ê±Î´Ö§¸¶µÄÃëÉ±¶©µ¥Íê³É");
+        log.info("å¤„ç†è¶…æ—¶æœªæ”¯ä»˜çš„ç§’æ€è®¢å•å®Œæˆ");
     }
 }
 

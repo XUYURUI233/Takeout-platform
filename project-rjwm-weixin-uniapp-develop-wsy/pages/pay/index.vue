@@ -57,7 +57,7 @@
 
 <script>
 import { mapState } from "vuex";
-import { paymentOrder, cancelOrder } from "@/pages/api/api.js";
+import { paymentOrder, cancelOrder, paySeckillOrder } from "@/pages/api/api.js";
 export default {
   data() {
     return {
@@ -68,6 +68,7 @@ export default {
       activeRadio: 0,
       payMethodList: ["微信支付"],
       times: null,
+      orderType: 'normal', // normal | seckill
     };
   },
   created() {
@@ -78,6 +79,7 @@ export default {
   },
   onLoad(options) {
     this.orderId = options.orderId;
+    this.orderType = options.type || 'normal';
   },
   methods: {
     ...mapState(["orderData", "shopInfo"]),
@@ -97,16 +99,24 @@ export default {
         };
         console.log("支付参数：", params);
         console.log("订单信息：", this.orderDataInfo);
-        paymentOrder(params).then(async (res) => {
+        console.log("订单类型：", this.orderType);
+        
+        // 根据订单类型选择支付API
+        const paymentAPI = this.orderType === 'seckill' ? paySeckillOrder : paymentOrder;
+        
+        paymentAPI(params).then(async (res) => {
           console.log("支付接口返回：", res);
           if (res.code === 1) {
             // 实验环境：直接显示支付成功，跳过微信支付验证
             await uni.showToast({ title: "支付成功", icon: "success" });
             setTimeout(() => {
               // 支付成功，跳转到成功页面
-              console.log("跳转到支付成功页面，订单ID：", this.orderId);
+              console.log("跳转到支付成功页面，订单ID：", this.orderId, "订单类型：", this.orderType);
+              const successUrl = this.orderType === 'seckill' 
+                ? `/pages/success/index?orderId=${this.orderId}&orderNumber=${this.orderDataInfo.orderNumber}&type=seckill`
+                : `/pages/success/index?orderId=${this.orderId}`;
               uni.redirectTo({
-                url: "/pages/success/index?orderId=" + this.orderId,
+                url: successUrl,
               });
             }, 1500);
           } else {
@@ -122,8 +132,11 @@ export default {
           // 实验环境：即使请求失败也显示支付成功
           uni.showToast({ title: "支付成功", icon: "success" });
           setTimeout(() => {
+            const successUrl = this.orderType === 'seckill' 
+              ? `/pages/success/index?orderId=${this.orderId}&orderNumber=${this.orderDataInfo.orderNumber}&type=seckill`
+              : `/pages/success/index?orderId=${this.orderId}`;
             uni.redirectTo({
-              url: "/pages/success/index?orderId=" + this.orderId,
+              url: successUrl,
             });
           }, 1500);
         });

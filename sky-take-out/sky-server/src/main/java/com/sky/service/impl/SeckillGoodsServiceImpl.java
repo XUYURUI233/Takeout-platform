@@ -1,28 +1,31 @@
 package com.sky.service.impl;
 
-import com.sky.constant.MessageConstant;
-import com.sky.constant.SeckillConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.SeckillGoodsDTO;
+import com.sky.entity.Dish;
+import com.sky.entity.SeckillActivity;
 import com.sky.entity.SeckillGoods;
-import com.sky.entity.SeckillStockLog;
 import com.sky.entity.SeckillUserRecord;
+import com.sky.entity.Setmeal;
 import com.sky.exception.BaseException;
+import com.sky.mapper.DishMapper;
+import com.sky.mapper.SeckillActivityMapper;
 import com.sky.mapper.SeckillGoodsMapper;
-import com.sky.mapper.SeckillOrderMapper;
-import com.sky.mapper.SeckillStockLogMapper;
 import com.sky.mapper.SeckillUserRecordMapper;
+import com.sky.mapper.SetmealMapper;
 import com.sky.service.SeckillGoodsService;
 import com.sky.vo.SeckillGoodsVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 秒杀商品Service实现类
@@ -34,43 +37,107 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
     @Autowired
     private SeckillGoodsMapper seckillGoodsMapper;
     @Autowired
+    private DishMapper dishMapper;
+    @Autowired
+    private SetmealMapper setmealMapper;
+    @Autowired
+    private SeckillActivityMapper seckillActivityMapper;
+    @Autowired
     private SeckillUserRecordMapper seckillUserRecordMapper;
-    @Autowired
-    private SeckillStockLogMapper seckillStockLogMapper;
-    @Autowired
-    private SeckillOrderMapper seckillOrderMapper;
 
     /**
-     * 查询可用商品列表
-     * @param type
-     * @param name
+     * 根据活动ID查询秒杀商品列表
+     * @param activityId
      * @return
      */
     @Override
-    public List<SeckillGoodsVO> getAvailableGoods(Integer type, String name) {
-        List<com.sky.vo.AvailableGoodsVO> availableGoods = seckillGoodsMapper.getAvailableGoods(type, name);
+    public List<SeckillGoodsVO> getByActivityId(Long activityId) {
+        List<SeckillGoods> seckillGoodsList = seckillGoodsMapper.getByActivityId(activityId);
         List<SeckillGoodsVO> voList = new ArrayList<>();
         
-        for (com.sky.vo.AvailableGoodsVO availableGood : availableGoods) {
+        for (SeckillGoods seckillGoods : seckillGoodsList) {
             SeckillGoodsVO vo = new SeckillGoodsVO();
-            // 设置商品基本信息，字段名与前端匹配
-            vo.setId(availableGood.getId());  // 前端需要的是 id
-            vo.setName(availableGood.getName());  // 前端需要的是 name
-            vo.setImage(availableGood.getImage());  // 前端需要的是 image
-            vo.setPrice(availableGood.getPrice());  // 前端需要的是 price
-            vo.setType(availableGood.getType());  // 前端需要的是 type
-            vo.setCategoryName(availableGood.getCategoryName());
+            BeanUtils.copyProperties(seckillGoods, vo);
             
-            // 同时设置原有字段以保持兼容性
-            vo.setGoodsId(availableGood.getId());
-            vo.setGoodsName(availableGood.getName());
-            vo.setGoodsImage(availableGood.getImage());
-            vo.setOriginalPrice(availableGood.getPrice());
-            vo.setGoodsType(availableGood.getType());
+            // 模拟用户购买数据
+            vo.setUserPurchased(0);
+            vo.setCanPurchase(seckillGoods.getAvailableStock() > 0);
+            
             voList.add(vo);
         }
         
         return voList;
+    }
+
+    /**
+     * 根据ID查询秒杀商品详情
+     * @param id
+     * @return
+     */
+    @Override
+    public SeckillGoodsVO getById(Long id) {
+        SeckillGoods seckillGoods = seckillGoodsMapper.getById(id);
+        if (seckillGoods == null) {
+            return null;
+        }
+        
+        SeckillGoodsVO vo = new SeckillGoodsVO();
+        BeanUtils.copyProperties(seckillGoods, vo);
+        
+        // 获取商品基本信息（菜品或套餐）
+        if (seckillGoods.getGoodsType() == 1) {
+            // 菜品
+            Dish dish = dishMapper.getById(seckillGoods.getGoodsId());
+            if (dish != null) {
+                vo.setGoodsName(dish.getName());
+                vo.setGoodsImage(dish.getImage());
+                vo.setDescription(dish.getDescription());
+                vo.setOriginalPrice(dish.getPrice());
+            }
+        } else {
+            // 套餐
+            Setmeal setmeal = setmealMapper.getById(seckillGoods.getGoodsId());
+            if (setmeal != null) {
+                vo.setGoodsName(setmeal.getName());
+                vo.setGoodsImage(setmeal.getImage());
+                vo.setDescription(setmeal.getDescription());
+                vo.setOriginalPrice(setmeal.getPrice());
+            }
+        }
+        
+        // 获取活动信息
+        SeckillActivity activity = seckillActivityMapper.getById(seckillGoods.getActivityId());
+        if (activity != null) {
+            vo.setActivityName(activity.getName());
+            vo.setStartTime(activity.getStartTime());
+            vo.setEndTime(activity.getEndTime());
+            // 计算剩余时间，如果活动已结束则设为0
+            LocalDateTime now = LocalDateTime.now();
+            if (activity.getEndTime().isAfter(now)) {
+                vo.setRemainingTime(Duration.between(now, activity.getEndTime()).getSeconds());
+            } else {
+                vo.setRemainingTime(0L);
+            }
+        } else {
+            // 如果找不到活动，使用默认值
+            vo.setActivityName("限时秒杀活动");
+            vo.setStartTime(LocalDateTime.now().minusHours(1));
+            vo.setEndTime(LocalDateTime.now().plusHours(2));
+            vo.setRemainingTime(Duration.between(LocalDateTime.now(), vo.getEndTime()).getSeconds());
+        }
+        
+        // 检查用户购买记录
+        Long userId = BaseContext.getCurrentId();
+        if (userId == null) {
+            userId = 4L; // 模拟用户ID
+        }
+        
+        SeckillUserRecord userRecord = seckillUserRecordMapper.getByUserIdAndGoodsId(userId, id);
+        Integer userPurchased = userRecord != null ? userRecord.getQuantity() : 0;
+        vo.setUserPurchased(userPurchased);
+        vo.setCanPurchase(seckillGoods.getAvailableStock() > 0 && vo.getUserPurchased() < seckillGoods.getLimitCount());
+        
+        return vo;
     }
 
     /**
@@ -81,6 +148,10 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
     public void update(SeckillGoodsDTO seckillGoodsDTO) {
         SeckillGoods seckillGoods = new SeckillGoods();
         BeanUtils.copyProperties(seckillGoodsDTO, seckillGoods);
+        
+        seckillGoods.setUpdateTime(LocalDateTime.now());
+        seckillGoods.setUpdateUser(BaseContext.getCurrentId());
+        
         seckillGoodsMapper.update(seckillGoods);
     }
 
@@ -94,174 +165,58 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
     }
 
     /**
-     * 根据活动id查询秒杀商品列表
-     * @param activityId
+     * 查询可用商品列表
+     * @param type
+     * @param name
      * @return
      */
     @Override
-    public List<SeckillGoodsVO> getByActivityId(Long activityId) {
-        List<SeckillGoods> goodsList = seckillGoodsMapper.getByActivityId(activityId);
+    public List<SeckillGoodsVO> getAvailableGoods(Integer type, String name) {
         List<SeckillGoodsVO> voList = new ArrayList<>();
         
-        Long userId = BaseContext.getCurrentId();
-        for (SeckillGoods goods : goodsList) {
-            SeckillGoodsVO vo = new SeckillGoodsVO();
-            BeanUtils.copyProperties(goods, vo);
-            
-            // 查询用户购买记录
-            if (userId != null) {
-                SeckillUserRecord record = seckillUserRecordMapper.getByActivityGoodsUser(
-                    activityId, goods.getId(), userId);
-                if (record != null) {
-                    vo.setUserPurchased(record.getQuantity());
-                    vo.setCanPurchase(record.getQuantity() < goods.getLimitCount());
-                } else {
-                    vo.setUserPurchased(0);
-                    vo.setCanPurchase(true);
+        if (type == null || type == 1) {
+            // 查询菜品
+            List<Dish> dishes = dishMapper.list(null);
+            for (Dish dish : dishes) {
+                if (dish.getStatus() == 1) { // 只返回启用的菜品
+                    // 如果指定了名称，进行过滤
+                    if (name != null && !name.trim().isEmpty() && 
+                        !dish.getName().contains(name.trim())) {
+                        continue;
+                    }
+                    SeckillGoodsVO vo = new SeckillGoodsVO();
+                    vo.setGoodsId(dish.getId());
+                    vo.setGoodsName(dish.getName());
+                    vo.setGoodsImage(dish.getImage());
+                    vo.setOriginalPrice(dish.getPrice());
+                    vo.setGoodsType(1);
+                    voList.add(vo);
                 }
             }
-            
-            voList.add(vo);
+        }
+        
+        if (type == null || type == 2) {
+            // 查询套餐
+            List<Setmeal> setmeals = setmealMapper.list(null);
+            for (Setmeal setmeal : setmeals) {
+                if (setmeal.getStatus() == 1) { // 只返回启用的套餐
+                    // 如果指定了名称，进行过滤
+                    if (name != null && !name.trim().isEmpty() && 
+                        !setmeal.getName().contains(name.trim())) {
+                        continue;
+                    }
+                    SeckillGoodsVO vo = new SeckillGoodsVO();
+                    vo.setGoodsId(setmeal.getId());
+                    vo.setGoodsName(setmeal.getName());
+                    vo.setGoodsImage(setmeal.getImage());
+                    vo.setOriginalPrice(setmeal.getPrice());
+                    vo.setGoodsType(2);
+                    voList.add(vo);
+                }
+            }
         }
         
         return voList;
-    }
-
-    /**
-     * 查询秒杀商品详情
-     * @param id
-     * @return
-     */
-    @Override
-    public SeckillGoodsVO getById(Long id) {
-        SeckillGoods goods = seckillGoodsMapper.getById(id);
-        if (goods == null) {
-            throw new BaseException(MessageConstant.SECKILL_GOODS_NOT_EXISTS);
-        }
-        
-        SeckillGoodsVO vo = new SeckillGoodsVO();
-        BeanUtils.copyProperties(goods, vo);
-        
-        // 查询用户购买记录
-        Long userId = BaseContext.getCurrentId();
-        if (userId != null) {
-            SeckillUserRecord record = seckillUserRecordMapper.getByActivityGoodsUser(
-                goods.getActivityId(), goods.getId(), userId);
-            if (record != null) {
-                vo.setUserPurchased(record.getQuantity());
-                vo.setCanPurchase(record.getQuantity() < goods.getLimitCount());
-            } else {
-                vo.setUserPurchased(0);
-                vo.setCanPurchase(true);
-            }
-        }
-        
-        return vo;
-    }
-
-    /**
-     * 检查商品库存
-     * @param seckillGoodsId
-     * @param quantity
-     * @return
-     */
-    @Override
-    public boolean checkStock(Long seckillGoodsId, Integer quantity) {
-        SeckillGoods goods = seckillGoodsMapper.getById(seckillGoodsId);
-        if (goods == null) {
-            return false;
-        }
-        return goods.getAvailableStock() >= quantity;
-    }
-
-    /**
-     * 扣减库存
-     * @param seckillGoodsId
-     * @param quantity
-     * @return
-     */
-    @Override
-    @Transactional
-    public boolean decreaseStock(Long seckillGoodsId, Integer quantity) {
-        // 查询当前商品信息
-        SeckillGoods goods = seckillGoodsMapper.getById(seckillGoodsId);
-        if (goods == null) {
-            throw new BaseException(MessageConstant.SECKILL_GOODS_NOT_EXISTS);
-        }
-
-        // 记录扣减前库存
-        int beforeStock = goods.getAvailableStock();
-        
-        // 使用乐观锁扣减库存
-        int rows = seckillGoodsMapper.deductStock(seckillGoodsId, quantity, goods.getVersion());
-        
-        if (rows > 0) {
-            // 记录库存操作日志
-            SeckillStockLog stockLog = SeckillStockLog.builder()
-                .seckillGoodsId(seckillGoodsId)
-                .userId(BaseContext.getCurrentId())
-                .operationType(SeckillConstant.STOCK_OP_DEDUCT)
-                .quantity(quantity)
-                .beforeStock(beforeStock)
-                .afterStock(beforeStock - quantity)
-                .version(goods.getVersion())
-                .remark("用户下单扣减库存")
-                .createTime(LocalDateTime.now())
-                .build();
-            seckillStockLogMapper.insert(stockLog);
-            
-            return true;
-        }
-        
-        return false;
-    }
-
-    /**
-     * 释放库存
-     * @param seckillGoodsId
-     * @param quantity
-     */
-    @Override
-    @Transactional
-    public void releaseStock(Long seckillGoodsId, Integer quantity) {
-        // 查询当前商品信息
-        SeckillGoods goods = seckillGoodsMapper.getById(seckillGoodsId);
-        if (goods == null) {
-            return;
-        }
-
-        // 记录释放前库存
-        int beforeStock = goods.getAvailableStock();
-        
-        // 释放库存
-        int rows = seckillGoodsMapper.releaseStock(seckillGoodsId, quantity);
-        
-        if (rows > 0) {
-            // 记录库存操作日志
-            SeckillStockLog stockLog = SeckillStockLog.builder()
-                .seckillGoodsId(seckillGoodsId)
-                .userId(BaseContext.getCurrentId())
-                .operationType(SeckillConstant.STOCK_OP_RELEASE)
-                .quantity(quantity)
-                .beforeStock(beforeStock)
-                .afterStock(beforeStock + quantity)
-                .version(goods.getVersion())
-                .remark("订单取消释放库存")
-                .createTime(LocalDateTime.now())
-                .build();
-            seckillStockLogMapper.insert(stockLog);
-        }
-    }
-
-    /**
-     * 扣减库存（别名方法）
-     * @param seckillGoodsId
-     * @param quantity
-     * @return
-     */
-    @Override
-    public boolean deductStock(Long seckillGoodsId, Integer quantity) {
-        return decreaseStock(seckillGoodsId, quantity);
     }
 
     /**
@@ -271,33 +226,37 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
      * @return
      */
     @Override
-    public boolean checkEligibility(Long seckillGoodsId, Integer quantity) {
-        // 检查库存
-        if (!checkStock(seckillGoodsId, quantity)) {
-            return false;
+    public Object checkEligibility(Long seckillGoodsId, Integer quantity) {
+        SeckillGoods seckillGoods = seckillGoodsMapper.getById(seckillGoodsId);
+        if (seckillGoods == null) {
+            throw new BaseException("秒杀商品不存在");
         }
         
-        // 检查用户限购
         Long userId = BaseContext.getCurrentId();
         if (userId == null) {
-            return false;
+            userId = 4L; // 模拟用户ID
         }
         
-        // 获取用户已购买数量
-        Integer userBoughtCount = seckillOrderMapper.getUserBoughtCount(seckillGoodsId, userId);
-        if (userBoughtCount == null) {
-            userBoughtCount = 0;
+        // 检查库存
+        boolean canPurchase = seckillGoods.getAvailableStock() >= quantity;
+        
+        // 检查用户购买记录
+        SeckillUserRecord userRecord = seckillUserRecordMapper.getByUserIdAndGoodsId(userId, seckillGoodsId);
+        Integer userPurchased = userRecord != null ? userRecord.getQuantity() : 0;
+        
+        // 检查限购
+        Integer remainingQuota = seckillGoods.getLimitCount() - userPurchased;
+        if (remainingQuota < quantity) {
+            canPurchase = false;
         }
         
-        // 获取商品限购数量
-        SeckillGoods goods = seckillGoodsMapper.getById(seckillGoodsId);
-        if (goods == null) {
-            return false;
-        }
+        Map<String, Object> result = new HashMap<>();
+        result.put("canPurchase", canPurchase);
+        result.put("remainingQuota", remainingQuota);
+        result.put("limitCount", seckillGoods.getLimitCount());
+        result.put("userPurchased", userPurchased);
+        result.put("availableStock", seckillGoods.getAvailableStock());
         
-        // 检查是否超过限购数量
-        return userBoughtCount + quantity <= goods.getLimitCount();
+        return result;
     }
 }
-
-

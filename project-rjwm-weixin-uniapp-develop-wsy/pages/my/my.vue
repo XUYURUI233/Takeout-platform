@@ -23,7 +23,7 @@
 
       <view class="container">
         <!-- 地址和历史订单 -->
-        <order-info @goAddress="goAddress" @goOrder="goOrder"></order-info>
+        <order-info @goAddress="goAddress" @goOrder="goOrder" @goSeckillOrder="goSeckillOrder"></order-info>
         <!-- 最近订单 -->
         <!-- 最近订单title -->
         <view
@@ -148,6 +148,12 @@ export default {
       // TODO
       uni.navigateTo({
         url: "/pages/historyOrder/historyOrder",
+      });
+    },
+    // 去秒杀订单页面
+    goSeckillOrder() {
+      uni.navigateTo({
+        url: "/pages/seckillOrder/seckillOrder",
       });
     },
     async oneOrderFun(id) {

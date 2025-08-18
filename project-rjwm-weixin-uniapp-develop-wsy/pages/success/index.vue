@@ -6,14 +6,17 @@
         src="../../static/success.png"
         mode=""
       ></image>
-      <view class="success_title"> 支付成功 </view>
+      <view class="success_title"> {{ getSuccessTitle() }} </view>
       <view class="word-box">
-        <text class="word_bottom"
+        <text class="word_bottom" v-if="!isSeckillOrder"
           >预计<text class="word_date">{{ arrivalTime }}</text
           >送达</text
         >
+        <text class="word_bottom" v-else
+          >订单号：<text class="word_date">{{ orderNumber }}</text></text
+        >
       </view>
-      <view class="success_desc"> 后厨已开始疯狂备餐中, 请耐心等待~ </view>
+      <view class="success_desc"> {{ getSuccessDesc() }} </view>
       <!-- 新添加 -->
       <view class="btns">
         <view class="go_dish defaultBtn" @click="goIndex()"> 返回首页 </view>
@@ -29,17 +32,25 @@ export default {
     return {
       arrivalTime: "",
       orderId: null,
+      orderNumber: "",
+      orderType: "normal", // normal | seckill
     };
   },
   computed: {
     tableInfo: function () {
       return this.shopInfo();
     },
+    // 是否为秒杀订单
+    isSeckillOrder() {
+      return this.orderType === 'seckill';
+    }
   },
   onLoad(options) {
     // 获取一小时以后的时间
     this.getHarfAnOur();
     this.orderId = options.orderId;
+    this.orderNumber = options.orderNumber || '';
+    this.orderType = options.type || 'normal';
   },
   methods: {
     ...mapState(["shopInfo", "arrivals"]),
@@ -51,13 +62,33 @@ export default {
     },
     // 查看订单
     goOrder() {
-      uni.navigateTo({
-        url: "/pages/details/index?orderId=" + this.orderId,
-      });
+      if (this.isSeckillOrder) {
+        // 秒杀订单跳转到秒杀订单详情页面
+        uni.navigateTo({
+          url: "/pages/seckillOrderDetail/seckillOrderDetail?orderId=" + this.orderId,
+        });
+      } else {
+        // 普通订单跳转到普通订单详情页面
+        uni.navigateTo({
+          url: "/pages/details/index?orderId=" + this.orderId,
+        });
+      }
     },
     // 获取一小时以后的时间
     getHarfAnOur() {
       this.arrivalTime = this.arrivals();
+    },
+    
+    // 获取成功标题
+    getSuccessTitle() {
+      return this.isSeckillOrder ? '抢购成功' : '支付成功';
+    },
+    
+    // 获取成功描述
+    getSuccessDesc() {
+      return this.isSeckillOrder 
+        ? '恭喜您成功抢购到心仪商品，后厨已开始疯狂备餐中，请耐心等待~' 
+        : '后厨已开始疯狂备餐中, 请耐心等待~';
     },
   },
 };

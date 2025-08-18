@@ -13,6 +13,7 @@ import com.sky.exception.AddressBookBusinessException;
 import com.sky.exception.OrderBusinessException;
 import com.sky.exception.ShoppingCartBusinessException;
 import com.sky.mapper.*;
+import com.sky.entity.SeckillOrder;
 import com.sky.result.PageResult;
 import com.sky.service.OrderService;
 import com.sky.utils.HttpClientUtil;
@@ -54,6 +55,9 @@ public class OrderServiceImpl implements OrderService {
     private UserMapper userMapper;
     @Autowired
     private WeChatPayUtil weChatPayUtil;
+    
+    @Autowired
+    private SeckillOrderMapper seckillOrderMapper;
     @Autowired
     private WebSocketServer webSocketServer;
 
@@ -139,7 +143,7 @@ public class OrderServiceImpl implements OrderService {
      * @param address
      */
     private void checkOutOfRange(String address) {
-        Map map = new HashMap();
+        Map<String, String> map = new HashMap<>();
         map.put("address",shopAddress);
         map.put("output","json");
         map.put("ak",ak);
@@ -272,7 +276,7 @@ public class OrderServiceImpl implements OrderService {
         log.info("订单支付成功，订单号：{}，订单ID：{}", outTradeNo, ordersDB.getId());
 
         //通过websocket向客户端浏览器推送消息 type orderId content
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<>();
         map.put("type",1); // 1表示来单提醒 2表示客户催单
         map.put("orderId",ordersDB.getId());
         map.put("content","订单号：" + outTradeNo);
@@ -300,7 +304,7 @@ public class OrderServiceImpl implements OrderService {
         // 分页条件查询
         Page<Orders> page = orderMapper.pageQuery(ordersPageQueryDTO);
 
-        List<OrderVO> list = new ArrayList();
+        List<OrderVO> list = new ArrayList<>();
 
         // 查询出订单明细，并封装入OrderVO进行响应
         if (page != null && page.getTotal() > 0) {
@@ -313,11 +317,27 @@ public class OrderServiceImpl implements OrderService {
                 OrderVO orderVO = new OrderVO();
                 BeanUtils.copyProperties(orders, orderVO);
                 orderVO.setOrderDetailList(orderDetails);
+                
+                // 检查是否为秒杀订单，如果是，使用秒杀订单的状态
+                SeckillOrder seckillOrder = seckillOrderMapper.getByOrderId(orderId);
+                if (seckillOrder != null) {
+                    // 这是秒杀订单，使用秒杀订单的状态
+                    orderVO.setStatus(seckillOrder.getStatus());
+                    orderVO.setPayStatus(seckillOrder.getPayStatus());
+                    orderVO.setIsSeckillOrder(true);
+                    orderVO.setSeckillOrderId(seckillOrder.getId());
+                    orderVO.setPayExpireTime(seckillOrder.getPayExpireTime());
+                    
+                    log.debug("订单ID: {} 是秒杀订单，使用秒杀订单状态: {}", orderId, seckillOrder.getStatus());
+                } else {
+                    // 普通订单，标记为非秒杀订单
+                    orderVO.setIsSeckillOrder(false);
+                }
 
                 list.add(orderVO);
             }
         }
-        return new PageResult(page.getTotal(), list);
+        return new PageResult(page != null ? page.getTotal() : 0, list);
     }
 
     /**
@@ -337,10 +357,22 @@ public class OrderServiceImpl implements OrderService {
         // 查询该订单对应的菜品/套餐明细
         List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(orders.getId());
 
+        // 检查是否为秒杀订单
+        SeckillOrder seckillOrder = seckillOrderMapper.getByOrderId(orders.getId());
+
         // 将该订单及其详情封装到OrderVO并返回
         OrderVO orderVO = new OrderVO();
         BeanUtils.copyProperties(orders, orderVO);
         orderVO.setOrderDetailList(orderDetailList);
+        
+        // 如果是秒杀订单，添加秒杀订单标识和相关信息
+        if (seckillOrder != null) {
+            orderVO.setIsSeckillOrder(true);
+            orderVO.setSeckillOrderId(seckillOrder.getId());
+            orderVO.setPayExpireTime(seckillOrder.getPayExpireTime());
+        } else {
+            orderVO.setIsSeckillOrder(false);
+        }
 
         return orderVO;
     }
@@ -647,7 +679,7 @@ public class OrderServiceImpl implements OrderService {
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
 
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<>();
         map.put("type",2); //1表示来单提醒 2表示客户催单
         map.put("orderId",id);
         map.put("content","订单号：" + ordersDB.getNumber());

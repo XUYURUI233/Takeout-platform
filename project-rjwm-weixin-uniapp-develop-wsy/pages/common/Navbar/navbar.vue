@@ -5,6 +5,11 @@
 			<image class="test_image" src="../../../static/center.png"></image>
 			<span class="person-title">个人中心</span>
 		</view>
+		<!-- 返回按钮 -->
+		<view @click="goBack" class="back-box" :style="{top:(ht + 60) + 'px'}">
+			<image class="back_image" src="../../../static/btn_back.png"></image>
+			<span class="back-title">返回</span>
+		</view>
 		<image class="index_bg" src="../../../static/bg.png"></image>
 		<!-- <view class="leftNav" >
 			<image class="logo" src="/static/logo.png"></image>
@@ -34,6 +39,11 @@ export default {
 		myCenterFun () {
 			uni.navigateTo({
 				url: '/pages/my/my'
+			})
+		},
+		goBack () {
+			uni.navigateBack({
+				delta: 1
 			})
 		}
 	}

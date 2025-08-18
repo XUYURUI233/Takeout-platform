@@ -11,7 +11,7 @@
  Target Server Version : 50536
  File Encoding         : 65001
 
- Date: 17/08/2025 12:03:29
+ Date: 18/08/2025 22:00:55
 */
 
 SET NAMES utf8mb4;
@@ -216,7 +216,7 @@ CREATE TABLE `order_detail`  (
   `number` int(11) NOT NULL DEFAULT 1 COMMENT '数量',
   `amount` decimal(10, 2) NOT NULL COMMENT '金额',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '订单明细表' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '订单明细表' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of order_detail
@@ -239,6 +239,10 @@ INSERT INTO `order_detail` VALUES (15, '萨芬全国', 'https://kuikuiwww.oss-cn
 INSERT INTO `order_detail` VALUES (16, '粉色的四个', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/85d2cdb9-6e80-472f-8216-5334945fa224.png', 11, NULL, 2, NULL, 1, 1802.00);
 INSERT INTO `order_detail` VALUES (17, '馋嘴牛蛙', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/7a55b845-1f2b-41fa-9486-76d187ee9ee1.png', 12, 64, NULL, NULL, 1, 88.00);
 INSERT INTO `order_detail` VALUES (18, '粉色的四个', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/85d2cdb9-6e80-472f-8216-5334945fa224.png', 13, NULL, 2, NULL, 1, 1802.00);
+INSERT INTO `order_detail` VALUES (19, '萨芬全国', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/d47afa3a-c42c-41a6-ae35-95a9255e27fc.png', 17, 72, NULL, '', 1, 9.60);
+INSERT INTO `order_detail` VALUES (20, '委屈委屈', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/037c0e09-a00b-4aa8-a44d-39d4e28a30be.png', 18, 70, NULL, '', 1, 800.00);
+INSERT INTO `order_detail` VALUES (21, '王老吉', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/41bfcacf-7ad4-4927-8b26-df366553a94c.png', 19, 46, NULL, '', 1, 4.80);
+INSERT INTO `order_detail` VALUES (22, '委屈委屈', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/037c0e09-a00b-4aa8-a44d-39d4e28a30be.png', 20, 70, NULL, '', 2, 800.00);
 
 -- ----------------------------
 -- Table structure for orders
@@ -270,7 +274,7 @@ CREATE TABLE `orders`  (
   `tableware_number` int(11) NULL DEFAULT NULL COMMENT '餐具数量',
   `tableware_status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '餐具数量状态  1按餐量提供  0选择具体数量',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '订单表' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '订单表' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of orders
@@ -288,6 +292,13 @@ INSERT INTO `orders` VALUES (10, '1755105932769', 5, 4, 1, '2025-08-14 01:25:32'
 INSERT INTO `orders` VALUES (11, '1755106183141', 6, 4, 1, '2025-08-14 01:29:43', '2025-08-14 01:29:44', 1, 1, 1822.00, '', '18026714983', '八栋7b503房间', NULL, '徐徐', '菜品已销售完，暂时无法接单', NULL, '2025-08-14 02:24:42', '2025-08-14 01:59:00', 0, '2025-08-14 01:30:40', 2, 0, 0);
 INSERT INTO `orders` VALUES (12, '1755109456528', 5, 4, 1, '2025-08-14 02:24:16', '2025-08-14 02:24:18', 1, 1, 95.00, '', '18026714983', '八栋7b503房间', NULL, '徐徐', NULL, NULL, NULL, '2025-08-14 02:54:00', 0, '2025-08-14 02:24:34', 1, 0, 0);
 INSERT INTO `orders` VALUES (13, '1755282303077', 5, 4, 1, '2025-08-16 02:25:03', '2025-08-16 02:25:05', 1, 1, 1809.00, '', '18026714983', '八栋7b503房间', NULL, '徐徐', NULL, NULL, NULL, '2025-08-16 02:54:00', 0, '2025-08-16 13:24:41', 1, 0, 0);
+INSERT INTO `orders` VALUES (14, 'SK1755492898691', 4, 4, 1, '2025-08-18 12:54:58', '2025-08-18 12:54:58', 1, 1, 3.00, '', '18026714983', '八栋7b503房间', NULL, '徐徐', NULL, NULL, NULL, '2025-08-18 13:54:58', 1, NULL, 0, 1, 1);
+INSERT INTO `orders` VALUES (15, 'SK1755494187654', 4, 4, 1, '2025-08-18 13:16:27', '2025-08-18 13:16:27', 1, 1, 3.00, '', '18026714983', '八栋7b503房间', NULL, '徐徐', NULL, NULL, NULL, '2025-08-18 14:16:27', 1, NULL, 0, 1, 1);
+INSERT INTO `orders` VALUES (16, 'SK1755495651058', 5, 4, 1, '2025-08-18 13:40:51', '2025-08-18 13:40:51', 1, 1, 9.60, '', '18026714983', '八栋7b503房间', NULL, '徐徐', NULL, NULL, NULL, '2025-08-18 14:40:51', 1, '2025-08-18 14:08:18', 0, 1, 1);
+INSERT INTO `orders` VALUES (17, 'SK1755496159340', 5, 4, 1, '2025-08-18 13:49:19', '2025-08-18 13:49:19', 1, 1, 9.60, '', '18026714983', '八栋7b503房间', NULL, '徐徐', NULL, NULL, NULL, '2025-08-18 14:49:19', 1, '2025-08-18 14:08:17', 0, 1, 1);
+INSERT INTO `orders` VALUES (18, 'SK1755496506826', 5, 4, 1, '2025-08-18 13:55:06', '2025-08-18 13:55:06', 1, 1, 800.00, '', '18026714983', '八栋7b503房间', NULL, '徐徐', NULL, NULL, NULL, '2025-08-18 14:55:06', 1, '2025-08-18 14:08:16', 0, 1, 1);
+INSERT INTO `orders` VALUES (19, 'SK1755497096460', 5, 4, 1, '2025-08-18 14:04:56', '2025-08-18 14:04:56', 1, 1, 4.80, '', '18026714983', '八栋7b503房间', NULL, '徐徐', NULL, NULL, NULL, '2025-08-18 15:04:56', 1, '2025-08-18 14:08:15', 0, 1, 1);
+INSERT INTO `orders` VALUES (20, 'SK1755499344839', 5, 4, 1, '2025-08-18 14:42:24', '2025-08-18 14:42:24', 1, 1, 1600.00, '', '18026714983', '八栋7b503房间', NULL, '徐徐', NULL, NULL, NULL, '2025-08-18 15:42:24', 1, NULL, 0, 1, 1);
 
 -- ----------------------------
 -- Table structure for seckill_activity
@@ -309,12 +320,14 @@ CREATE TABLE `seckill_activity`  (
   INDEX `idx_start_time`(`start_time`) USING BTREE,
   INDEX `idx_end_time`(`end_time`) USING BTREE,
   INDEX `idx_status`(`status`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '��ɱ���' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '��ɱ���' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of seckill_activity
 -- ----------------------------
-INSERT INTO `seckill_activity` VALUES (1, '阿松大', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/seckill-banner.png', '2025-08-20 10:00:00', '2025-08-20 12:00:00', 0, '啊士大夫', '2025-08-16 15:00:00', '2025-08-16 15:00:00', 1, 1);
+INSERT INTO `seckill_activity` VALUES (2, '撒法发', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/ff5222bf-252c-4278-bd0f-df7dcba88dbc.png', '2025-08-17 00:00:00', '2025-08-21 00:00:00', 1, '啊伺服驱动器', '2025-08-17 15:35:53', '2025-08-17 15:50:52', 1, 1);
+INSERT INTO `seckill_activity` VALUES (3, '完全缺乏', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/8acc31f2-168f-4974-a9e6-01a80150b0cb.png', '2025-08-17 00:00:00', '2025-08-20 00:00:00', 1, '', '2025-08-17 15:44:10', '2025-08-17 15:44:27', 1, 1);
+INSERT INTO `seckill_activity` VALUES (4, '大师傅v阿哥', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/c90de013-5e6b-4463-8295-2aefacfd20cc.png', '2025-08-17 00:00:00', '2025-08-19 00:00:00', 1, '按时发送给全国曲棍球', '2025-08-17 15:51:35', '2025-08-17 15:51:39', 1, 1);
 
 -- ----------------------------
 -- Table structure for seckill_goods
@@ -344,39 +357,78 @@ CREATE TABLE `seckill_goods`  (
   INDEX `idx_activity_id`(`activity_id`) USING BTREE,
   INDEX `idx_goods_type_id`(`goods_type`, `goods_id`) USING BTREE,
   INDEX `idx_status`(`status`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '��ɱ��Ʒ��' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '��ɱ��Ʒ��' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of seckill_goods
 -- ----------------------------
-INSERT INTO `seckill_goods` VALUES (1, 1, 1, 46, '阿松大', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/41bfcacf-7ad4-4927-8b26-df366553a94c.png', 6.00, 3.00, 100, 100, 0, 2, 0, 1, '2025-08-16 15:00:00', '2025-08-16 15:00:00', 1, 1);
-INSERT INTO `seckill_goods` VALUES (2, 1, 1, 49, '萨达', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/76752350-2121-44d2-b477-10791c23a8ec.png', 2.00, 1.00, 200, 200, 0, 3, 0, 1, '2025-08-16 15:00:00', '2025-08-16 15:00:00', 1, 1);
+INSERT INTO `seckill_goods` VALUES (3, 2, 1, 46, '王老吉', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/41bfcacf-7ad4-4927-8b26-df366553a94c.png', 6.00, 4.70, 100, 100, 0, 84, 0, 1, '2025-08-17 15:35:53', '2025-08-17 15:35:53', 1, 1);
+INSERT INTO `seckill_goods` VALUES (4, 2, 1, 70, '委屈委屈', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/037c0e09-a00b-4aa8-a44d-39d4e28a30be.png', 1123.00, 800.00, 100, 100, 0, 84, 0, 1, '2025-08-17 15:35:53', '2025-08-17 15:35:53', 1, 1);
+INSERT INTO `seckill_goods` VALUES (5, 3, 1, 46, '王老吉', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/41bfcacf-7ad4-4927-8b26-df366553a94c.png', 6.00, 4.80, 100, 100, 0, 20, 0, 1, '2025-08-17 15:44:10', '2025-08-17 15:44:10', 1, 1);
+INSERT INTO `seckill_goods` VALUES (6, 3, 1, 47, '北冰洋', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/4451d4be-89a2-4939-9c69-3a87151cb979.png', 4.00, 3.20, 100, 100, 0, 20, 0, 1, '2025-08-17 15:44:10', '2025-08-17 15:44:10', 1, 1);
+INSERT INTO `seckill_goods` VALUES (7, 3, 1, 48, '雪花啤酒', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/bf8cbfc1-04d2-40e8-9826-061ee41ab87c.png', 4.00, 3.20, 100, 100, 0, 20, 0, 1, '2025-08-17 15:44:10', '2025-08-17 15:44:10', 1, 1);
+INSERT INTO `seckill_goods` VALUES (8, 3, 1, 70, '委屈委屈', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/037c0e09-a00b-4aa8-a44d-39d4e28a30be.png', 1123.00, 898.40, 100, 100, 0, 20, 0, 1, '2025-08-17 15:44:10', '2025-08-17 15:44:10', 1, 1);
+INSERT INTO `seckill_goods` VALUES (9, 3, 1, 71, '七个v啊', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/2f00dc6f-bdad-4cf0-9946-f062cc726875.png', 12.00, 9.60, 100, 100, 0, 20, 0, 1, '2025-08-17 15:44:10', '2025-08-17 15:44:10', 1, 1);
+INSERT INTO `seckill_goods` VALUES (10, 4, 1, 46, '王老吉', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/41bfcacf-7ad4-4927-8b26-df366553a94c.png', 6.00, 4.80, 100, 100, 0, 20, 0, 1, '2025-08-17 15:51:35', '2025-08-17 15:51:35', 1, 1);
+INSERT INTO `seckill_goods` VALUES (11, 4, 1, 50, '馒头', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/475cc599-8661-4899-8f9e-121dd8ef7d02.png', 1.00, 0.80, 100, 100, 0, 20, 0, 1, '2025-08-17 15:51:35', '2025-08-17 15:51:35', 1, 1);
+INSERT INTO `seckill_goods` VALUES (12, 4, 1, 49, '米饭', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/76752350-2121-44d2-b477-10791c23a8ec.png', 2.00, 1.60, 100, 100, 0, 20, 0, 1, '2025-08-17 15:51:35', '2025-08-17 15:51:35', 1, 1);
+INSERT INTO `seckill_goods` VALUES (13, 4, 1, 60, '梅菜扣肉', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/6080b118-e30a-4577-aab4-45042e3f88be.png', 58.00, 46.40, 100, 100, 0, 20, 0, 1, '2025-08-17 15:51:35', '2025-08-17 15:51:35', 1, 1);
+INSERT INTO `seckill_goods` VALUES (14, 4, 1, 61, '剁椒鱼头', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/13da832f-ef2c-484d-8370-5934a1045a06.png', 66.00, 52.80, 100, 100, 0, 20, 0, 1, '2025-08-17 15:51:35', '2025-08-17 15:51:35', 1, 1);
+INSERT INTO `seckill_goods` VALUES (15, 4, 1, 72, '萨芬全国', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/d47afa3a-c42c-41a6-ae35-95a9255e27fc.png', 12.00, 9.60, 100, 100, 0, 20, 0, 1, '2025-08-17 15:51:35', '2025-08-17 15:51:35', 1, 1);
+INSERT INTO `seckill_goods` VALUES (16, 4, 1, 70, '委屈委屈', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/037c0e09-a00b-4aa8-a44d-39d4e28a30be.png', 1123.00, 898.40, 100, 100, 0, 20, 0, 1, '2025-08-17 15:51:35', '2025-08-17 15:51:35', 1, 1);
 
 -- ----------------------------
 -- Table structure for seckill_order
 -- ----------------------------
 DROP TABLE IF EXISTS `seckill_order`;
 CREATE TABLE `seckill_order`  (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '����',
-  `order_id` bigint(20) NOT NULL COMMENT '����ID������orders���',
-  `activity_id` bigint(20) NOT NULL COMMENT '��ɱ�ID',
-  `seckill_goods_id` bigint(20) NOT NULL COMMENT '��ɱ��ƷID',
-  `user_id` bigint(20) NOT NULL COMMENT '�û�ID',
-  `quantity` int(11) NOT NULL DEFAULT 1 COMMENT '��������',
-  `seckill_price` decimal(10, 2) NOT NULL COMMENT '��ɱ�۸�',
-  `total_amount` decimal(10, 2) NOT NULL COMMENT '�����ܽ��',
-  `pay_status` int(11) NOT NULL DEFAULT 0 COMMENT '֧��״̬ 0:δ֧�� 1:��֧�� 2:֧����ʱȡ��',
-  `pay_expire_time` datetime NOT NULL COMMENT '֧����ʱʱ��',
-  `create_time` datetime NULL DEFAULT NULL COMMENT '����ʱ��',
-  `update_time` datetime NULL DEFAULT NULL COMMENT '����ʱ��',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `order_id` bigint(20) NULL DEFAULT NULL COMMENT '关联的订单ID',
+  `number` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '订单号',
+  `activity_id` bigint(20) NOT NULL COMMENT '秒杀活动ID',
+  `seckill_goods_id` bigint(20) NOT NULL COMMENT '秒杀商品ID',
+  `goods_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '商品名称',
+  `goods_image` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '商品图片',
+  `goods_type` int(11) NOT NULL DEFAULT 1 COMMENT '商品类型 1菜品 2套餐',
+  `original_price` decimal(10, 2) NOT NULL COMMENT '商品原价',
+  `seckill_price` decimal(10, 2) NOT NULL COMMENT '秒杀价格',
+  `quantity` int(11) NOT NULL DEFAULT 1 COMMENT '购买数量',
+  `amount` decimal(10, 2) NOT NULL COMMENT '订单总金额',
+  `user_id` bigint(20) NOT NULL COMMENT '用户ID',
+  `status` int(11) NOT NULL DEFAULT 1 COMMENT '订单状态 1待付款 2待接单 3已接单 4派送中 5已完成 6已取消',
+  `pay_status` int(11) NOT NULL DEFAULT 0 COMMENT '支付状态 0未支付 1已支付 2退款',
+  `pay_method` int(11) NULL DEFAULT NULL COMMENT '支付方式 1微信 2支付宝',
+  `order_time` datetime NOT NULL COMMENT '下单时间',
+  `checkout_time` datetime NULL DEFAULT NULL COMMENT '支付时间',
+  `pay_expire_time` datetime NOT NULL COMMENT '支付超时时间',
+  `remark` varchar(200) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '备注',
+  `address_book_id` bigint(20) NOT NULL COMMENT '收货地址ID',
+  `consignee` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '收货人',
+  `phone` varchar(11) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '手机号',
+  `address` varchar(200) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '收货地址',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  `update_time` datetime NOT NULL COMMENT '更新时间',
+  `create_user` bigint(20) NOT NULL COMMENT '创建人',
+  `update_user` bigint(20) NOT NULL COMMENT '更新人',
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `idx_order_id_unique`(`order_id`) USING BTREE,
-  INDEX `idx_order_id`(`order_id`) USING BTREE,
-  INDEX `idx_activity_id`(`activity_id`) USING BTREE,
-  INDEX `idx_user_id`(`user_id`) USING BTREE,
-  INDEX `idx_pay_status`(`pay_status`) USING BTREE,
-  INDEX `idx_pay_expire_time`(`pay_expire_time`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '��ɱ������' ROW_FORMAT = Compact;
+  UNIQUE INDEX `idx_order_number`(`number`) USING BTREE COMMENT '订单号唯一索引',
+  INDEX `idx_user_id`(`user_id`) USING BTREE COMMENT '用户ID索引',
+  INDEX `idx_activity_id`(`activity_id`) USING BTREE COMMENT '活动ID索引',
+  INDEX `idx_seckill_goods_id`(`seckill_goods_id`) USING BTREE COMMENT '秒杀商品ID索引',
+  INDEX `idx_pay_expire_time`(`pay_expire_time`) USING BTREE COMMENT '支付超时时间索引',
+  INDEX `idx_order_time`(`order_time`) USING BTREE COMMENT '下单时间索引'
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '秒杀订单' ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Records of seckill_order
+-- ----------------------------
+INSERT INTO `seckill_order` VALUES (1, 14, 'SK1755492898691', 1, 11, '���ϼ�', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/41bfcacf-7ad4-4927-8b26-df366553a94c.png', 1, 6.00, 3.00, 1, 3.00, 4, 2, 1, 1, '2025-08-18 12:54:58', '2025-08-18 12:54:58', '2025-08-18 13:09:58', '', 1, '徐徐', '18026714983', '八栋7b503房间', '2025-08-18 12:54:58', '2025-08-18 12:54:58', 4, 4);
+INSERT INTO `seckill_order` VALUES (2, 15, 'SK1755494187654', 1, 6, '���ϼ�', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/41bfcacf-7ad4-4927-8b26-df366553a94c.png', 1, 6.00, 3.00, 1, 3.00, 4, 2, 1, 1, '2025-08-18 13:16:27', '2025-08-18 13:16:27', '2025-08-18 13:31:27', '', 1, '徐徐', '18026714983', '八栋7b503房间', '2025-08-18 13:16:27', '2025-08-18 13:16:27', 4, 4);
+INSERT INTO `seckill_order` VALUES (3, 16, 'SK1755495651058', 3, 9, '七个v啊', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/2f00dc6f-bdad-4cf0-9946-f062cc726875.png', 1, 12.00, 9.60, 1, 9.60, 4, 2, 1, 1, '2025-08-18 13:40:51', '2025-08-18 13:40:51', '2025-08-18 13:55:51', '', 1, '徐徐', '18026714983', '八栋7b503房间', '2025-08-18 13:40:51', '2025-08-18 13:40:51', 4, 4);
+INSERT INTO `seckill_order` VALUES (4, 17, 'SK1755496159340', 4, 15, '萨芬全国', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/d47afa3a-c42c-41a6-ae35-95a9255e27fc.png', 1, 12.00, 9.60, 1, 9.60, 4, 2, 1, 1, '2025-08-18 13:49:19', '2025-08-18 13:49:19', '2025-08-18 14:04:19', '', 1, '徐徐', '18026714983', '八栋7b503房间', '2025-08-18 13:49:19', '2025-08-18 13:49:19', 4, 4);
+INSERT INTO `seckill_order` VALUES (5, 18, 'SK1755496506826', 2, 4, '委屈委屈', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/037c0e09-a00b-4aa8-a44d-39d4e28a30be.png', 1, 1123.00, 800.00, 1, 800.00, 4, 2, 1, 1, '2025-08-18 13:55:06', '2025-08-18 13:55:06', '2025-08-18 14:10:06', '', 1, '徐徐', '18026714983', '八栋7b503房间', '2025-08-18 13:55:06', '2025-08-18 13:55:06', 4, 4);
+INSERT INTO `seckill_order` VALUES (6, 19, 'SK1755497096460', 4, 10, '王老吉', 'https://sky-itcast.oss-cn-beijing.aliyuncs.com/41bfcacf-7ad4-4927-8b26-df366553a94c.png', 1, 6.00, 4.80, 1, 4.80, 4, 2, 1, 1, '2025-08-18 14:04:56', '2025-08-18 14:04:56', '2025-08-18 14:19:56', '', 1, '徐徐', '18026714983', '八栋7b503房间', '2025-08-18 14:04:56', '2025-08-18 14:04:56', 4, 4);
+INSERT INTO `seckill_order` VALUES (7, 20, 'SK1755499344839', 2, 4, '委屈委屈', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/037c0e09-a00b-4aa8-a44d-39d4e28a30be.png', 1, 1123.00, 800.00, 2, 1600.00, 4, 5, 1, 1, '2025-08-18 14:42:24', '2025-08-18 14:42:24', '2025-08-18 14:57:24', '', 1, '徐徐', '18026714983', '八栋7b503房间', '2025-08-18 14:42:24', '2025-08-18 14:42:24', 4, 4);
 
 -- ----------------------------
 -- Table structure for seckill_stock_log
@@ -486,7 +538,12 @@ CREATE TABLE `shopping_cart`  (
   `amount` decimal(10, 2) NOT NULL COMMENT '金额',
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '购物车' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '购物车' ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Records of shopping_cart
+-- ----------------------------
+INSERT INTO `shopping_cart` VALUES (2, '粉色的四个', 'https://kuikuiwww.oss-cn-guangzhou.aliyuncs.com/85d2cdb9-6e80-472f-8216-5334945fa224.png', 4, NULL, 2, NULL, 1, 1802.00, '2025-08-18 14:47:29');
 
 -- ----------------------------
 -- Table structure for user

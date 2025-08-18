@@ -84,14 +84,59 @@
       }
 
     },
-    {
+        {
       "path": "pages/historyOrder/historyOrder",
       "style": {
-				"navigationStyle": "custom",
+			"navigationStyle": "custom",
         "navigationBarTitleText": "历史订单",
         "enablePullDownRefresh": false,
         "navigationBarBackgroundColor": "#333333"
 
+      }
+    },
+    {
+      "path": "pages/seckill/activity-detail/activity-detail",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "秒杀活动",
+        "enablePullDownRefresh": false,
+        "navigationBarBackgroundColor": "#333333"
+      }
+    },
+    {
+      "path": "pages/seckill/goods-detail/goods-detail",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "秒杀商品",
+        "enablePullDownRefresh": false,
+        "navigationBarBackgroundColor": "#333333"
+      }
+    },
+    {
+      "path": "pages/seckill/order/order",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "确认订单",
+        "enablePullDownRefresh": false,
+        "navigationBarBackgroundColor": "#333333"
+      }
+    },
+    {
+      "path": "pages/seckillOrder/seckillOrder",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "秒杀订单",
+        "enablePullDownRefresh": true,
+        "navigationBarBackgroundColor": "#ff4d4f"
+      }
+    },
+    {
+      "path": "pages/seckillOrderDetail/seckillOrderDetail",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "秒杀订单详情",
+        "enablePullDownRefresh": false,
+        "navigationBarBackgroundColor": "#ff4d4f"
       }
     }
     ],

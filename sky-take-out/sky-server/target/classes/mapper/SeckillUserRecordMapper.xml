@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sky.mapper.SeckillUserRecordMapper">
+
+    <!-- Insert user purchase record -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into seckill_user_record (activity_id, seckill_goods_id, user_id, quantity, create_time, update_time)
+        values (#{activityId}, #{seckillGoodsId}, #{userId}, #{quantity}, #{createTime}, #{updateTime})
+    </insert>
+
+    <!-- Update user purchase record -->
+    <update id="update">
+        update seckill_user_record
+        <set>
+            <if test="quantity != null">quantity = #{quantity},</if>
+            <if test="updateTime != null">update_time = #{updateTime}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!-- Insert or update user purchase record using ON DUPLICATE KEY UPDATE -->
+    <insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id">
+        insert into seckill_user_record (activity_id, seckill_goods_id, user_id, quantity, create_time, update_time)
+        values (#{activityId}, #{seckillGoodsId}, #{userId}, #{quantity}, #{createTime}, #{updateTime})
+        on duplicate key update
+            quantity = quantity + #{quantity},
+            update_time = #{updateTime}
+    </insert>
+
+</mapper>

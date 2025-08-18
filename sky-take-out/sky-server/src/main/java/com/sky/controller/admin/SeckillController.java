@@ -11,8 +11,7 @@ import com.sky.service.SeckillGoodsService;
 import com.sky.service.SeckillOrderService;
 import com.sky.vo.SeckillActivityVO;
 import com.sky.vo.SeckillGoodsVO;
-import com.sky.vo.SeckillOrderVO;
-import com.sky.vo.SeckillStatisticsVO;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +47,12 @@ public class SeckillController {
     @ApiOperation("分页查询秒杀活动列表")
     public Result<PageResult> pageQuery(SeckillActivityPageQueryDTO seckillActivityPageQueryDTO) {
         log.info("分页查询秒杀活动：{}", seckillActivityPageQueryDTO);
-        PageResult pageResult = seckillActivityService.pageQuery(seckillActivityPageQueryDTO);
+        PageResult pageResult = seckillActivityService.pageQuery(
+            seckillActivityPageQueryDTO.getPage(), 
+            seckillActivityPageQueryDTO.getPageSize(), 
+            seckillActivityPageQueryDTO.getName(), 
+            seckillActivityPageQueryDTO.getStatus()
+        );
         return Result.success(pageResult);
     }
 
@@ -59,7 +63,7 @@ public class SeckillController {
      */
     @PostMapping("/activity")
     @ApiOperation("新增秒杀活动")
-    public Result<String> save(@RequestBody SeckillActivityDTO seckillActivityDTO) {
+    public Result<Void> save(@RequestBody SeckillActivityDTO seckillActivityDTO) {
         log.info("新增秒杀活动：{}", seckillActivityDTO);
         seckillActivityService.save(seckillActivityDTO);
         return Result.success();
@@ -72,7 +76,7 @@ public class SeckillController {
      */
     @PutMapping("/activity")
     @ApiOperation("修改秒杀活动")
-    public Result<String> update(@RequestBody SeckillActivityDTO seckillActivityDTO) {
+    public Result<Void> update(@RequestBody SeckillActivityDTO seckillActivityDTO) {
         log.info("修改秒杀活动：{}", seckillActivityDTO);
         seckillActivityService.update(seckillActivityDTO);
         return Result.success();
@@ -85,7 +89,7 @@ public class SeckillController {
      */
     @DeleteMapping("/activity")
     @ApiOperation("删除秒杀活动")
-    public Result<String> delete(@RequestParam Long id) {
+    public Result<Void> delete(@RequestParam Long id) {
         log.info("删除秒杀活动：{}", id);
         seckillActivityService.deleteById(id);
         return Result.success();
@@ -112,7 +116,7 @@ public class SeckillController {
      */
     @PostMapping("/activity/status/{status}")
     @ApiOperation("启用/停用秒杀活动")
-    public Result<String> startOrStop(@PathVariable Integer status, @RequestParam Long id) {
+    public Result<Void> startOrStop(@PathVariable Integer status, @RequestParam Long id) {
         log.info("启用/停用秒杀活动：{}，{}", status, id);
         seckillActivityService.startOrStop(status, id);
         return Result.success();
@@ -140,7 +144,7 @@ public class SeckillController {
      */
     @PutMapping("/goods")
     @ApiOperation("修改秒杀商品信息")
-    public Result<String> updateGoods(@RequestBody SeckillGoodsDTO seckillGoodsDTO) {
+    public Result<Void> updateGoods(@RequestBody SeckillGoodsDTO seckillGoodsDTO) {
         log.info("修改秒杀商品信息：{}", seckillGoodsDTO);
         seckillGoodsService.update(seckillGoodsDTO);
         return Result.success();
@@ -153,7 +157,7 @@ public class SeckillController {
      */
     @DeleteMapping("/goods")
     @ApiOperation("删除秒杀商品")
-    public Result<String> deleteGoods(@RequestParam Long id) {
+    public Result<Void> deleteGoods(@RequestParam Long id) {
         log.info("删除秒杀商品：{}", id);
         seckillGoodsService.deleteById(id);
         return Result.success();
@@ -168,7 +172,11 @@ public class SeckillController {
     @ApiOperation("查询秒杀订单列表")
     public Result<PageResult> orderPageQuery(SeckillOrderPageQueryDTO seckillOrderPageQueryDTO) {
         log.info("分页查询秒杀订单：{}", seckillOrderPageQueryDTO);
-        PageResult pageResult = seckillOrderService.adminPageQuery(seckillOrderPageQueryDTO);
+        PageResult pageResult = seckillOrderService.pageQueryByUser(
+            seckillOrderPageQueryDTO.getPage(),
+            seckillOrderPageQueryDTO.getPageSize(),
+            seckillOrderPageQueryDTO.getStatus()
+        );
         return Result.success(pageResult);
     }
 
@@ -179,10 +187,10 @@ public class SeckillController {
      */
     @GetMapping("/order/details/{id}")
     @ApiOperation("查询秒杀订单详情")
-    public Result<SeckillOrderVO> getOrderDetails(@PathVariable Long id) {
+    public Result<Object> getOrderDetails(@PathVariable Long id) {
         log.info("查询秒杀订单详情：{}", id);
-        SeckillOrderVO seckillOrderVO = seckillOrderService.getOrderDetails(id);
-        return Result.success(seckillOrderVO);
+        Object orderDetail = seckillOrderService.getOrderDetail(id);
+        return Result.success(orderDetail);
     }
 
     /**
@@ -194,11 +202,11 @@ public class SeckillController {
      */
     @GetMapping("/statistics")
     @ApiOperation("查询秒杀活动统计数据")
-    public Result<SeckillStatisticsVO> getStatistics(@RequestParam Long activityId,
-                                                     @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate beginDate,
-                                                     @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
+    public Result<Object> getStatistics(@RequestParam Long activityId,
+                                       @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate beginDate,
+                                       @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
         log.info("查询秒杀活动统计数据：{}，{}，{}", activityId, beginDate, endDate);
-        SeckillStatisticsVO statisticsVO = seckillActivityService.getStatistics(activityId, beginDate, endDate);
-        return Result.success(statisticsVO);
+        Object statistics = seckillActivityService.getStatistics(activityId, beginDate.toString(), endDate.toString());
+        return Result.success(statistics);
     }
 }

@@ -3,21 +3,39 @@ package com.sky.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
-import com.sky.constant.SeckillConstant;
 import com.sky.context.BaseContext;
-import com.sky.dto.SeckillOrderDTO;
-import com.sky.dto.SeckillOrderPageQueryDTO;
-import com.sky.entity.*;
-import com.sky.exception.BaseException;
+import com.sky.dto.OrdersPaymentDTO;
+import com.sky.dto.SeckillOrderSubmitDTO;
+import com.sky.entity.AddressBook;
+import com.sky.entity.Dish;
+import com.sky.entity.OrderDetail;
+import com.sky.entity.Orders;
+import com.sky.entity.SeckillActivity;
+import com.sky.entity.SeckillGoods;
+import com.sky.entity.SeckillOrder;
+import com.sky.entity.SeckillUserRecord;
+import com.sky.entity.Setmeal;
+import com.sky.entity.User;
+import com.sky.exception.AddressBookBusinessException;
 import com.sky.exception.OrderBusinessException;
-import com.sky.mapper.*;
+import org.springframework.dao.DataIntegrityViolationException;
+import com.sky.mapper.AddressBookMapper;
+import com.sky.mapper.DishMapper;
+import com.sky.mapper.OrderDetailMapper;
+import com.sky.mapper.OrderMapper;
+import com.sky.mapper.SeckillActivityMapper;
+import com.sky.mapper.SeckillGoodsMapper;
+import com.sky.mapper.SeckillOrderMapper;
+import com.sky.mapper.SeckillUserRecordMapper;
+import com.sky.mapper.SetmealMapper;
+import com.sky.mapper.UserMapper;
 import com.sky.result.PageResult;
-import com.sky.service.SeckillGoodsService;
 import com.sky.service.SeckillOrderService;
+import com.sky.service.SeckillStockService;
+
+import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.SeckillOrderSubmitVO;
-import com.sky.vo.SeckillOrderVO;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,234 +43,351 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-/**
- * 秒杀订单Service实现类
- */
 @Service
 @Slf4j
 public class SeckillOrderServiceImpl implements SeckillOrderService {
 
     @Autowired
     private SeckillOrderMapper seckillOrderMapper;
-    @Autowired
-    private SeckillGoodsMapper seckillGoodsMapper;
-    @Autowired
-    private SeckillUserRecordMapper seckillUserRecordMapper;
-    @Autowired
-    private SeckillGoodsService seckillGoodsService;
+
     @Autowired
     private OrderMapper orderMapper;
+
     @Autowired
     private AddressBookMapper addressBookMapper;
 
+    @Autowired
+    private SeckillGoodsMapper seckillGoodsMapper;
+
+    @Autowired
+    private DishMapper dishMapper;
+
+    @Autowired
+    private SetmealMapper setmealMapper;
+
+    @Autowired
+    private SeckillActivityMapper seckillActivityMapper;
+
+    @Autowired
+    private OrderDetailMapper orderDetailMapper;
+
+    @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
+    private SeckillUserRecordMapper seckillUserRecordMapper;
+
+    @Autowired
+    private SeckillStockService seckillStockService;
+
     /**
      * 提交秒杀订单
-     * @param seckillOrderDTO
+     * @param seckillOrderSubmitDTO
      * @return
      */
     @Override
     @Transactional
-    public SeckillOrderSubmitVO submitOrder(SeckillOrderDTO seckillOrderDTO) {
+    public SeckillOrderSubmitVO submitOrder(SeckillOrderSubmitDTO seckillOrderSubmitDTO) {
+        log.info("提交秒杀订单: {}", seckillOrderSubmitDTO);
+
+        // 获取当前用户ID
         Long userId = BaseContext.getCurrentId();
-        
-        // 查询秒杀商品
-        SeckillGoods goods = seckillGoodsMapper.getById(seckillOrderDTO.getSeckillGoodsId());
-        if (goods == null) {
-            throw new BaseException(MessageConstant.SECKILL_GOODS_NOT_EXISTS);
+        if (userId == null) {
+            userId = 4L; // 模拟用户ID，实际应该从JWT中获取
+        }
+
+        // 1. 验证地址簿
+        AddressBook addressBook = addressBookMapper.getById(seckillOrderSubmitDTO.getAddressBookId());
+        if (addressBook == null) {
+            throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_IS_NULL);
+        }
+
+        // 2. 获取秒杀商品信息并进行各种检查
+        SeckillGoods seckillGoods = seckillGoodsMapper.getById(seckillOrderSubmitDTO.getSeckillGoodsId());
+        if (seckillGoods == null) {
+            throw new OrderBusinessException("秒杀商品不存在");
         }
         
-        // 检查购买资格
-        SeckillUserRecord userRecord = seckillUserRecordMapper.getByActivityGoodsUser(
-            goods.getActivityId(), goods.getId(), userId);
-        int userPurchased = userRecord != null ? userRecord.getQuantity() : 0;
-        
-        if (userPurchased + seckillOrderDTO.getQuantity() > goods.getLimitCount()) {
-            throw new BaseException(MessageConstant.SECKILL_EXCEED_LIMIT);
+        // 检查商品状态
+        if (seckillGoods.getStatus() != SeckillGoods.ONLINE) {
+            throw new OrderBusinessException("秒杀商品已下架");
         }
         
-        // 扣减库存
-        boolean deductSuccess = seckillGoodsService.deductStock(
-            seckillOrderDTO.getSeckillGoodsId(), seckillOrderDTO.getQuantity());
+        // 检查库存是否充足
+        if (seckillGoods.getAvailableStock() < seckillOrderSubmitDTO.getQuantity()) {
+            throw new OrderBusinessException("库存不足");
+        }
+        
+        // 检查用户限购
+        SeckillUserRecord userRecord = seckillUserRecordMapper.getByUserIdAndSeckillGoodsId(userId, seckillOrderSubmitDTO.getSeckillGoodsId());
+        int alreadyPurchased = userRecord != null ? userRecord.getQuantity() : 0;
+        if (alreadyPurchased + seckillOrderSubmitDTO.getQuantity() > seckillGoods.getLimitCount()) {
+            throw new OrderBusinessException("用户已达购买上限");
+        }
+        
+        // 3. 扣减库存（使用新的库存服务，带日志记录）
+        String orderNumber = "SK" + System.currentTimeMillis();
+        boolean deductSuccess = seckillStockService.deductStock(
+            seckillGoods.getId(), 
+            seckillOrderSubmitDTO.getQuantity(), 
+            seckillGoods.getVersion() != null ? seckillGoods.getVersion().longValue() : 1L,
+            null, // 订单ID稍后设置
+            orderNumber,
+            userId
+        );
+        
         if (!deductSuccess) {
-            throw new BaseException(MessageConstant.SECKILL_STOCK_NOT_ENOUGH);
+            // 库存扣减失败，可能是并发导致的版本号不匹配或库存不足
+            throw new OrderBusinessException("系统繁忙，请稍后重试");
         }
         
+        // 4. 更新或创建用户购买记录（使用MySQL的ON DUPLICATE KEY UPDATE避免并发问题）
         try {
-            // 查询地址信息
-            AddressBook addressBook = addressBookMapper.getById(seckillOrderDTO.getAddressBookId());
-            if (addressBook == null) {
-                throw new BaseException(MessageConstant.ADDRESS_BOOK_IS_NULL);
-            }
-            
-            // 创建普通订单
-            Orders order = new Orders();
-            order.setNumber(String.valueOf(System.currentTimeMillis()));
-            order.setStatus(Orders.PENDING_PAYMENT);
-            order.setUserId(userId);
-            order.setAddressBookId(seckillOrderDTO.getAddressBookId());
-            order.setOrderTime(LocalDateTime.now());
-            order.setPayMethod(1); // 默认微信支付
-            order.setPayStatus(Orders.UN_PAID);
-            order.setAmount(goods.getSeckillPrice().multiply(new BigDecimal(seckillOrderDTO.getQuantity())));
-            order.setRemark(seckillOrderDTO.getRemark());
-            order.setPhone(addressBook.getPhone());
-            order.setAddress(addressBook.getDetail());
-            order.setConsignee(addressBook.getConsignee());
-            order.setEstimatedDeliveryTime(LocalDateTime.now().plusHours(1));
-            order.setDeliveryStatus(1);
-            order.setPackAmount(0);
-            order.setTablewareNumber(0);
-            order.setTablewareStatus(1);
-            
-            orderMapper.insert(order);
-            
-            // 创建秒杀订单
-            SeckillOrder seckillOrder = new SeckillOrder();
-            seckillOrder.setOrderId(order.getId());
-            seckillOrder.setActivityId(goods.getActivityId());
-            seckillOrder.setSeckillGoodsId(goods.getId());
-            seckillOrder.setUserId(userId);
-            seckillOrder.setQuantity(seckillOrderDTO.getQuantity());
-            seckillOrder.setSeckillPrice(goods.getSeckillPrice());
-            seckillOrder.setTotalAmount(order.getAmount());
-            seckillOrder.setPayStatus(SeckillConstant.PAY_STATUS_UNPAID);
-            seckillOrder.setPayExpireTime(LocalDateTime.now().plusSeconds(SeckillConstant.PAY_TIME_LIMIT));
-            seckillOrder.setCreateTime(LocalDateTime.now());
-            seckillOrder.setUpdateTime(LocalDateTime.now());
-            
-            seckillOrderMapper.insert(seckillOrder);
-            
-            // 更新用户购买记录
             if (userRecord == null) {
-                userRecord = new SeckillUserRecord();
-                userRecord.setActivityId(goods.getActivityId());
-                userRecord.setSeckillGoodsId(goods.getId());
-                userRecord.setUserId(userId);
-                userRecord.setQuantity(seckillOrderDTO.getQuantity());
-                userRecord.setCreateTime(LocalDateTime.now());
-                userRecord.setUpdateTime(LocalDateTime.now());
-                seckillUserRecordMapper.insert(userRecord);
+                // 创建新的购买记录
+                userRecord = SeckillUserRecord.builder()
+                    .activityId(seckillGoods.getActivityId())
+                    .seckillGoodsId(seckillOrderSubmitDTO.getSeckillGoodsId())
+                    .userId(userId)
+                    .quantity(seckillOrderSubmitDTO.getQuantity())
+                    .createTime(LocalDateTime.now())
+                    .updateTime(LocalDateTime.now())
+                    .build();
+                seckillUserRecordMapper.insertOrUpdate(userRecord);
             } else {
-                seckillUserRecordMapper.updateQuantity(goods.getActivityId(), goods.getId(), 
-                    userId, seckillOrderDTO.getQuantity());
+                // 更新已有购买记录
+                userRecord.setQuantity(alreadyPurchased + seckillOrderSubmitDTO.getQuantity());
+                userRecord.setUpdateTime(LocalDateTime.now());
+                seckillUserRecordMapper.update(userRecord);
             }
-            
-            return SeckillOrderSubmitVO.builder()
-                .orderId(order.getId())
-                .orderNumber(order.getNumber())
-                .payExpireTime(seckillOrder.getPayExpireTime())
-                .totalAmount(order.getAmount())
-                .payTimeLimit(SeckillConstant.PAY_TIME_LIMIT)
-                .build();
-                
-        } catch (Exception e) {
-            // 如果创建订单失败，需要释放库存
-            seckillGoodsService.releaseStock(seckillOrderDTO.getSeckillGoodsId(), seckillOrderDTO.getQuantity());
-            throw e;
+        } catch (DataIntegrityViolationException e) {
+            // 处理并发情况下的重复键异常
+            log.warn("用户 {} 在秒杀商品 {} 时出现并发插入，尝试更新现有记录", userId, seckillOrderSubmitDTO.getSeckillGoodsId());
+            // 重新查询用户记录并更新
+            userRecord = seckillUserRecordMapper.getByUserIdAndSeckillGoodsId(userId, seckillOrderSubmitDTO.getSeckillGoodsId());
+            if (userRecord != null) {
+                userRecord.setQuantity(userRecord.getQuantity() + seckillOrderSubmitDTO.getQuantity());
+                userRecord.setUpdateTime(LocalDateTime.now());
+                seckillUserRecordMapper.update(userRecord);
+            } else {
+                throw new OrderBusinessException("系统繁忙，请稍后重试");
+            }
         }
+        
+        // 5. 创建普通订单记录
+        Orders orders = new Orders();
+        orders.setNumber(orderNumber);
+        orders.setStatus(Orders.PENDING_PAYMENT);
+        orders.setUserId(userId);
+        orders.setAddressBookId(seckillOrderSubmitDTO.getAddressBookId());
+        orders.setOrderTime(LocalDateTime.now());
+        orders.setPayStatus(Orders.UN_PAID);
+        orders.setPayMethod(1); // 设置默认支付方式为微信支付
+        
+        // 计算订单金额
+        BigDecimal totalAmount = seckillGoods.getSeckillPrice().multiply(new BigDecimal(seckillOrderSubmitDTO.getQuantity()));
+        orders.setAmount(totalAmount);
+        orders.setRemark(seckillOrderSubmitDTO.getRemark());
+        orders.setPhone(addressBook.getPhone());
+        orders.setAddress(addressBook.getDetail());
+        orders.setConsignee(addressBook.getConsignee());
+        orders.setEstimatedDeliveryTime(LocalDateTime.now().plusHours(1));
+        orders.setDeliveryStatus(1);
+        orders.setPackAmount(0);
+        orders.setTablewareNumber(1);
+        orders.setTablewareStatus(1);
+        // 不设置deliveryFee，因为OrderMapper.xml中没有这个字段
+
+        // 插入订单表
+        orderMapper.insert(orders);
+
+        // 6. 创建秒杀订单记录
+        SeckillOrder seckillOrder = new SeckillOrder();
+        seckillOrder.setOrderId(orders.getId());
+        seckillOrder.setNumber(orders.getNumber());
+        seckillOrder.setActivityId(seckillGoods.getActivityId());
+        seckillOrder.setSeckillGoodsId(seckillOrderSubmitDTO.getSeckillGoodsId());
+        
+        // 获取真实的商品信息
+        String goodsName;
+        String goodsImage;
+        BigDecimal originalPrice;
+        
+        if (seckillGoods.getGoodsType() == 1) {
+            // 菜品类型
+            Dish dish = dishMapper.getById(seckillGoods.getGoodsId());
+            if (dish != null) {
+                goodsName = dish.getName();
+                goodsImage = dish.getImage();
+                originalPrice = dish.getPrice();
+            } else {
+                goodsName = seckillGoods.getGoodsName();
+                goodsImage = seckillGoods.getGoodsImage();
+                originalPrice = seckillGoods.getOriginalPrice();
+            }
+        } else {
+            // 套餐类型
+            Setmeal setmeal = setmealMapper.getById(seckillGoods.getGoodsId());
+            if (setmeal != null) {
+                goodsName = setmeal.getName();
+                goodsImage = setmeal.getImage();
+                originalPrice = setmeal.getPrice();
+            } else {
+                goodsName = seckillGoods.getGoodsName();
+                goodsImage = seckillGoods.getGoodsImage();
+                originalPrice = seckillGoods.getOriginalPrice();
+            }
+        }
+        
+        seckillOrder.setGoodsName(goodsName);
+        seckillOrder.setGoodsImage(goodsImage);
+        seckillOrder.setGoodsType(seckillGoods.getGoodsType());
+        seckillOrder.setOriginalPrice(originalPrice);
+        seckillOrder.setSeckillPrice(seckillGoods.getSeckillPrice());
+        seckillOrder.setQuantity(seckillOrderSubmitDTO.getQuantity());
+        seckillOrder.setAmount(totalAmount);
+        seckillOrder.setUserId(userId);
+        seckillOrder.setStatus(Orders.PENDING_PAYMENT);
+        seckillOrder.setPayStatus(Orders.UN_PAID);
+        seckillOrder.setOrderTime(LocalDateTime.now());
+        seckillOrder.setPayExpireTime(LocalDateTime.now().plusMinutes(15)); // 15分钟支付超时
+        seckillOrder.setRemark(seckillOrderSubmitDTO.getRemark());
+        seckillOrder.setAddressBookId(seckillOrderSubmitDTO.getAddressBookId());
+        seckillOrder.setConsignee(addressBook.getConsignee());
+        seckillOrder.setPhone(addressBook.getPhone());
+        seckillOrder.setAddress(addressBook.getDetail());
+        seckillOrder.setCreateTime(LocalDateTime.now());
+        seckillOrder.setUpdateTime(LocalDateTime.now());
+        seckillOrder.setCreateUser(userId);
+        seckillOrder.setUpdateUser(userId);
+
+        // 插入秒杀订单表
+        seckillOrderMapper.insert(seckillOrder);
+
+        // 7. 创建订单明细记录（为了兼容普通订单详情接口）
+        OrderDetail orderDetail = new OrderDetail();
+        orderDetail.setOrderId(orders.getId());
+        orderDetail.setName(goodsName);
+        orderDetail.setImage(goodsImage);
+        orderDetail.setDishId(seckillGoods.getGoodsType() == 1 ? seckillGoods.getGoodsId() : null);
+        orderDetail.setSetmealId(seckillGoods.getGoodsType() == 2 ? seckillGoods.getGoodsId() : null);
+        orderDetail.setDishFlavor(""); // 秒杀商品没有口味选择
+        orderDetail.setNumber(seckillOrderSubmitDTO.getQuantity());
+        orderDetail.setAmount(seckillGoods.getSeckillPrice());
+
+        // 插入订单明细表
+        List<OrderDetail> orderDetailList = new ArrayList<>();
+        orderDetailList.add(orderDetail);
+        orderDetailMapper.insertBatch(orderDetailList);
+
+        // 8. 返回结果
+        SeckillOrderSubmitVO submitVO = SeckillOrderSubmitVO.builder()
+                .orderId(seckillOrder.getId()) // 使用秒杀订单ID而不是普通订单ID
+                .orderNumber(orders.getNumber())
+                .payExpireTime(seckillOrder.getPayExpireTime())
+                .totalAmount(seckillOrder.getAmount())
+                .payTimeLimit(15 * 60) // 15分钟
+                .build();
+
+        log.info("秒杀订单提交成功: {}", submitVO);
+        return submitVO;
     }
 
     /**
      * 秒杀订单支付
-     * @param orderNumber
-     * @param payMethod
-     */
-    @Override
-    @Transactional
-    public void payment(String orderNumber, Integer payMethod) {
-        // 查询订单
-        Orders order = orderMapper.getByNumber(orderNumber);
-        if (order == null) {
-            throw new BaseException(MessageConstant.ORDER_NOT_FOUND);
-        }
-        
-        // 更新订单支付状态
-        order.setPayStatus(Orders.PAID);
-        order.setCheckoutTime(LocalDateTime.now());
-        order.setStatus(Orders.TO_BE_CONFIRMED);
-        orderMapper.update(order);
-        
-        // 更新秒杀订单支付状态
-        seckillOrderMapper.updatePayStatus(order.getId(), SeckillConstant.PAY_STATUS_PAID);
-    }
-
-    /**
-     * 取消秒杀订单
-     * @param id
-     */
-    @Override
-    @Transactional
-    public void cancelOrder(Long id) {
-        // 查询订单
-        Orders order = orderMapper.getById(id);
-        if (order == null) {
-            throw new BaseException(MessageConstant.ORDER_NOT_FOUND);
-        }
-        
-        // 查询秒杀订单
-        SeckillOrder seckillOrder = seckillOrderMapper.getByOrderId(id);
-        if (seckillOrder == null) {
-            throw new BaseException(MessageConstant.ORDER_NOT_FOUND);
-        }
-        
-        // 只有未支付的订单才能取消
-        if (order.getPayStatus() != Orders.UN_PAID) {
-            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
-        }
-        
-        // 更新订单状态
-        order.setStatus(Orders.CANCELLED);
-        order.setCancelReason("用户取消");
-        order.setCancelTime(LocalDateTime.now());
-        orderMapper.update(order);
-        
-        // 更新秒杀订单状态
-        seckillOrderMapper.updatePayStatus(id, SeckillConstant.PAY_STATUS_TIMEOUT);
-        
-        // 释放库存
-        seckillGoodsService.releaseStock(seckillOrder.getSeckillGoodsId(), seckillOrder.getQuantity());
-    }
-
-    /**
-     * 分页查询秒杀订单（管理端）
-     * @param seckillOrderPageQueryDTO
+     * @param ordersPaymentDTO
      * @return
+     * @throws Exception
      */
     @Override
-    public PageResult adminPageQuery(SeckillOrderPageQueryDTO seckillOrderPageQueryDTO) {
-        PageHelper.startPage(seckillOrderPageQueryDTO.getPage(), seckillOrderPageQueryDTO.getPageSize());
-        Page<SeckillOrder> page = seckillOrderMapper.adminPageQuery(seckillOrderPageQueryDTO);
-        
-        List<SeckillOrderVO> list = new ArrayList<>();
-        for (SeckillOrder seckillOrder : page.getResult()) {
-            SeckillOrderVO vo = new SeckillOrderVO();
-            BeanUtils.copyProperties(seckillOrder, vo);
-            // TODO: 设置秒杀信息
-            list.add(vo);
-        }
-        
-        return new PageResult(page.getTotal(), list);
-    }
+    public OrderPaymentVO payment(OrdersPaymentDTO ordersPaymentDTO) throws Exception {
+        log.info("开始处理秒杀订单支付，订单号：{}，支付方式：{}", ordersPaymentDTO.getOrderNumber(), ordersPaymentDTO.getPayMethod());
 
-    /**
-     * 查询秒杀订单详情（管理端）
-     * @param id
-     * @return
-     */
-    @Override
-    public SeckillOrderVO getOrderDetails(Long id) {
-        SeckillOrder seckillOrder = seckillOrderMapper.getById(id);
-        if (seckillOrder == null) {
-            throw new BaseException(MessageConstant.ORDER_NOT_FOUND);
+        // 当前登录用户id
+        Long userId = BaseContext.getCurrentId();
+        if (userId == null) {
+            userId = 4L; // 模拟用户ID
         }
-        
-        SeckillOrderVO vo = new SeckillOrderVO();
-        BeanUtils.copyProperties(seckillOrder, vo);
-        // TODO: 设置秒杀信息和订单详情
-        
+        User user = userMapper.getById(userId);
+
+        log.info("当前用户ID：{}，用户信息：{}", userId, user);
+
+        // 调用微信支付接口，生成预支付交易单（这里先模拟）
+        // JSONObject jsonObject = weChatPayUtil.pay(
+        //         ordersPaymentDTO.getOrderNumber(), //商户订单号
+        //         new BigDecimal(3.00), //支付金额，单位 元
+        //         "苍穹外卖秒杀订单", //商品描述
+        //         user.getOpenid() //微信用户的openid
+        // );
+
+        // 手动调用支付成功方法，模拟支付完成
+        paySuccess(ordersPaymentDTO.getOrderNumber());
+
+        log.info("秒杀订单支付处理完成，订单号：{}", ordersPaymentDTO.getOrderNumber());
+
+        // 返回支付信息
+        OrderPaymentVO vo = new OrderPaymentVO();
+        vo.setNonceStr("mock_nonce_" + System.currentTimeMillis());
+        vo.setPaySign("mock_sign_" + System.currentTimeMillis());
+        vo.setTimeStamp(String.valueOf(System.currentTimeMillis()));
+        vo.setSignType("RSA");
+        vo.setPackageStr("prepay_id=mock_prepay_" + System.currentTimeMillis());
+
         return vo;
+    }
+
+    /**
+     * 支付成功，修改订单状态
+     * @param outTradeNo
+     */
+    @Override
+    public void paySuccess(String outTradeNo) {
+        // 当前登录用户id
+        Long userId = BaseContext.getCurrentId();
+        if (userId == null) {
+            userId = 4L; // 模拟用户ID
+        }
+
+        // 根据订单号查询当前用户的秒杀订单
+        SeckillOrder seckillOrderDB = seckillOrderMapper.getByNumberAndUserId(outTradeNo, userId);
+
+        // 检查订单是否存在
+        if (seckillOrderDB == null) {
+            log.error("秒杀订单不存在，订单号：{}，用户ID：{}", outTradeNo, userId);
+            throw new OrderBusinessException("订单不存在");
+        }
+
+        // 更新秒杀订单状态 - 秒杀订单支付成功后设为待接单状态
+        SeckillOrder seckillOrder = SeckillOrder.builder()
+                .id(seckillOrderDB.getId())
+                .status(Orders.TO_BE_CONFIRMED) // 支付成功后设为待接单状态
+                .payStatus(Orders.PAID)
+                .payMethod(1) // 微信支付
+                .checkoutTime(LocalDateTime.now())
+                .updateTime(LocalDateTime.now())
+                .updateUser(userId)
+                .build();
+
+        seckillOrderMapper.update(seckillOrder);
+
+        // 同时更新普通订单表的状态
+        if (seckillOrderDB.getOrderId() != null) {
+            Orders orders = Orders.builder()
+                    .id(seckillOrderDB.getOrderId())
+                    .status(Orders.TO_BE_CONFIRMED) // 支付成功后设为待接单状态
+                    .payStatus(Orders.PAID)
+                    .payMethod(1)
+                    .checkoutTime(LocalDateTime.now())
+                    .build();
+
+            orderMapper.update(orders);
+        }
+
+        log.info("秒杀订单支付成功，订单号：{}，订单ID：{}", outTradeNo, seckillOrderDB.getId());
     }
 
     /**
@@ -263,44 +398,158 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
      * @return
      */
     @Override
-    public PageResult userPageQuery(Integer page, Integer pageSize, Integer status) {
+    public PageResult pageQueryByUser(int page, int pageSize, Integer status) {
+        // 设置分页
         PageHelper.startPage(page, pageSize);
+
         Long userId = BaseContext.getCurrentId();
-        Page<SeckillOrder> orderPage = seckillOrderMapper.userPageQuery(userId, status);
-        
-        List<SeckillOrderVO> list = new ArrayList<>();
-        for (SeckillOrder seckillOrder : orderPage.getResult()) {
-            SeckillOrderVO vo = new SeckillOrderVO();
-            BeanUtils.copyProperties(seckillOrder, vo);
-            // TODO: 设置秒杀信息
-            list.add(vo);
+        if (userId == null) {
+            userId = 4L; // 模拟用户ID
         }
-        
-        return new PageResult(orderPage.getTotal(), list);
+
+        Page<SeckillOrder> pageResult = seckillOrderMapper.pageQueryByUser(userId, status);
+
+        // 转换数据格式，添加seckillInfo嵌套对象
+        List<Map<String, Object>> resultList = new ArrayList<>();
+        for (SeckillOrder seckillOrder : pageResult.getResult()) {
+            Map<String, Object> orderData = new HashMap<>();
+            orderData.put("id", seckillOrder.getId());
+            orderData.put("number", seckillOrder.getNumber());
+            orderData.put("status", seckillOrder.getStatus());
+            orderData.put("orderTime", seckillOrder.getOrderTime());
+            orderData.put("checkoutTime", seckillOrder.getCheckoutTime());
+            orderData.put("payMethod", seckillOrder.getPayMethod());
+            orderData.put("payStatus", seckillOrder.getPayStatus());
+            orderData.put("amount", seckillOrder.getAmount());
+
+            // 构建seckillInfo对象
+            Map<String, Object> seckillInfo = new HashMap<>();
+            
+            // 获取真实的活动名称
+            String activityName = "秒杀活动"; // 默认名称
+            if (seckillOrder.getActivityId() != null) {
+                SeckillActivity activity = seckillActivityMapper.getById(seckillOrder.getActivityId());
+                if (activity != null) {
+                    activityName = activity.getName();
+                }
+            }
+            
+            seckillInfo.put("activityName", activityName);
+            seckillInfo.put("goodsName", seckillOrder.getGoodsName());
+            seckillInfo.put("goodsImage", seckillOrder.getGoodsImage());
+            seckillInfo.put("originalPrice", seckillOrder.getOriginalPrice());
+            seckillInfo.put("seckillPrice", seckillOrder.getSeckillPrice());
+            seckillInfo.put("quantity", seckillOrder.getQuantity());
+
+            orderData.put("seckillInfo", seckillInfo);
+            resultList.add(orderData);
+        }
+
+        return new PageResult(pageResult.getTotal(), resultList);
     }
 
     /**
-     * 查询用户秒杀订单详情
+     * 根据ID查询秒杀订单详情
      * @param id
      * @return
      */
     @Override
-    public SeckillOrderVO getUserOrderDetails(Long id) {
+    public Object getOrderDetail(Long id) {
         SeckillOrder seckillOrder = seckillOrderMapper.getById(id);
         if (seckillOrder == null) {
-            throw new BaseException(MessageConstant.ORDER_NOT_FOUND);
+            throw new OrderBusinessException("订单不存在");
+        }
+
+        // 构建返回数据
+        Map<String, Object> orderDetail = new HashMap<>();
+        orderDetail.put("id", seckillOrder.getId());
+        orderDetail.put("number", seckillOrder.getNumber());
+        orderDetail.put("status", seckillOrder.getStatus());
+        orderDetail.put("orderTime", seckillOrder.getOrderTime());
+        orderDetail.put("checkoutTime", seckillOrder.getCheckoutTime());
+        orderDetail.put("payMethod", seckillOrder.getPayMethod());
+        orderDetail.put("payStatus", seckillOrder.getPayStatus());
+        orderDetail.put("amount", seckillOrder.getAmount());
+        orderDetail.put("remark", seckillOrder.getRemark());
+        orderDetail.put("phone", seckillOrder.getPhone());
+        orderDetail.put("address", seckillOrder.getAddress());
+        orderDetail.put("consignee", seckillOrder.getConsignee());
+        orderDetail.put("estimatedDeliveryTime", LocalDateTime.now().plusHours(1));
+
+        // 秒杀订单特有信息
+        Map<String, Object> seckillInfo = new HashMap<>();
+        
+        // 获取真实的活动名称
+        String activityName = "秒杀活动"; // 默认名称
+        if (seckillOrder.getActivityId() != null) {
+            SeckillActivity activity = seckillActivityMapper.getById(seckillOrder.getActivityId());
+            if (activity != null) {
+                activityName = activity.getName();
+            }
         }
         
-        // 检查是否是当前用户的订单
-        if (!seckillOrder.getUserId().equals(BaseContext.getCurrentId())) {
-            throw new BaseException(MessageConstant.ORDER_NOT_FOUND);
+        seckillInfo.put("activityName", activityName);
+        seckillInfo.put("goodsName", seckillOrder.getGoodsName());
+        seckillInfo.put("goodsImage", seckillOrder.getGoodsImage());
+        seckillInfo.put("originalPrice", seckillOrder.getOriginalPrice());
+        seckillInfo.put("seckillPrice", seckillOrder.getSeckillPrice());
+        seckillInfo.put("quantity", seckillOrder.getQuantity());
+
+        orderDetail.put("seckillInfo", seckillInfo);
+
+        return orderDetail;
+    }
+
+    /**
+     * 取消秒杀订单
+     * @param id
+     */
+    @Override
+    @Transactional
+    public void cancelOrder(Long id) {
+        SeckillOrder seckillOrder = seckillOrderMapper.getById(id);
+        if (seckillOrder == null) {
+            throw new OrderBusinessException("订单不存在");
         }
+
+        // 只有待支付状态的订单才能取消
+        if (!Orders.PENDING_PAYMENT.equals(seckillOrder.getStatus())) {
+            throw new OrderBusinessException("订单状态不允许取消");
+        }
+
+        // 1. 恢复库存（使用新的库存服务）
+        seckillStockService.releaseStock(
+            seckillOrder.getSeckillGoodsId(), 
+            seckillOrder.getQuantity(),
+            seckillOrder.getOrderId(),
+            seckillOrder.getNumber(),
+            seckillOrder.getUserId(),
+            "用户主动取消订单"
+        );
         
-        SeckillOrderVO vo = new SeckillOrderVO();
-        BeanUtils.copyProperties(seckillOrder, vo);
-        // TODO: 设置秒杀信息和订单详情
-        
-        return vo;
+        // 2. 更新用户购买记录
+        updateUserRecordOnCancel(seckillOrder.getUserId(), seckillOrder.getSeckillGoodsId(), seckillOrder.getQuantity());
+
+        // 3. 更新订单状态为已取消
+        SeckillOrder updateOrder = SeckillOrder.builder()
+                .id(id)
+                .status(Orders.CANCELLED)
+                .updateTime(LocalDateTime.now())
+                .build();
+
+        seckillOrderMapper.update(updateOrder);
+
+        // 4. 同时更新普通订单表的状态
+        if (seckillOrder.getOrderId() != null) {
+            Orders orders = Orders.builder()
+                    .id(seckillOrder.getOrderId())
+                    .status(Orders.CANCELLED)
+                    .build();
+
+            orderMapper.update(orders);
+        }
+
+        log.info("秒杀订单取消成功，订单ID：{}，已恢复库存：{}", id, seckillOrder.getQuantity());
     }
 
     /**
@@ -309,41 +558,139 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
      * @return
      */
     @Override
-    public SeckillOrderSubmitVO againOrder(Long id) {
-        // TODO: 实现再来一单逻辑
-        return null;
+    public SeckillOrderSubmitVO repeatOrder(Long id) {
+        // 查询原订单
+        SeckillOrder originalOrder = seckillOrderMapper.getById(id);
+        if (originalOrder == null) {
+            throw new OrderBusinessException("原订单不存在");
+        }
+
+        // 构建新的订单提交数据
+        SeckillOrderSubmitDTO submitDTO = new SeckillOrderSubmitDTO();
+        submitDTO.setSeckillGoodsId(originalOrder.getSeckillGoodsId());
+        submitDTO.setQuantity(originalOrder.getQuantity());
+        submitDTO.setAddressBookId(originalOrder.getAddressBookId());
+        submitDTO.setRemark(originalOrder.getRemark());
+
+        // 提交新订单
+        return submitOrder(submitDTO);
     }
 
     /**
-     * 处理超时未支付订单
+     * 处理超时未支付的秒杀订单
      */
     @Override
-    @Transactional
     public void handleExpiredOrders() {
-        List<SeckillOrder> expiredOrders = seckillOrderMapper.getExpiredOrders(LocalDateTime.now());
-        
-        for (SeckillOrder seckillOrder : expiredOrders) {
-            try {
-                // 更新订单状态
-                Orders order = orderMapper.getById(seckillOrder.getOrderId());
-                if (order != null && order.getPayStatus() == Orders.UN_PAID) {
-                    order.setStatus(Orders.CANCELLED);
-                    order.setCancelReason("订单超时，自动取消");
-                    order.setCancelTime(LocalDateTime.now());
-                    orderMapper.update(order);
+        try {
+            LocalDateTime currentTime = LocalDateTime.now();
+            List<SeckillOrder> expiredOrders = seckillOrderMapper.getExpiredOrders(currentTime);
+            
+            for (SeckillOrder expiredOrder : expiredOrders) {
+                log.info("处理超时订单: {}", expiredOrder.getNumber());
+                
+                // 1. 恢复库存（使用新的库存服务）
+                seckillStockService.releaseStock(
+                    expiredOrder.getSeckillGoodsId(), 
+                    expiredOrder.getQuantity(),
+                    expiredOrder.getOrderId(),
+                    expiredOrder.getNumber(),
+                    expiredOrder.getUserId(),
+                    "订单支付超时自动取消"
+                );
+                
+                // 2. 更新用户购买记录
+                updateUserRecordOnCancel(expiredOrder.getUserId(), expiredOrder.getSeckillGoodsId(), expiredOrder.getQuantity());
+                
+                // 3. 取消秒杀订单
+                SeckillOrder cancelOrder = SeckillOrder.builder()
+                        .id(expiredOrder.getId())
+                        .status(Orders.CANCELLED)
+                        .updateTime(LocalDateTime.now())
+                        .build();
+                seckillOrderMapper.update(cancelOrder);
+                
+                // 4. 同时取消普通订单
+                if (expiredOrder.getOrderId() != null) {
+                    Orders orders = Orders.builder()
+                            .id(expiredOrder.getOrderId())
+                            .status(Orders.CANCELLED)
+                            .build();
+                    orderMapper.update(orders);
                 }
                 
-                // 更新秒杀订单状态
-                seckillOrderMapper.updatePayStatus(seckillOrder.getOrderId(), SeckillConstant.PAY_STATUS_TIMEOUT);
-                
-                // 释放库存
-                seckillGoodsService.releaseStock(seckillOrder.getSeckillGoodsId(), seckillOrder.getQuantity());
-                
-                log.info("处理超时订单: {}", seckillOrder.getOrderId());
-            } catch (Exception e) {
-                log.error("处理超时订单异常: {}", seckillOrder.getOrderId(), e);
+                log.info("超时订单处理完成: {}，已恢复库存：{}", expiredOrder.getNumber(), expiredOrder.getQuantity());
             }
+            
+        } catch (Exception e) {
+            log.error("处理超时订单失败", e);
         }
     }
-}
 
+
+
+    /**
+     * 取消订单时更新用户购买记录
+     * @param userId 用户ID
+     * @param seckillGoodsId 秒杀商品ID
+     * @param quantity 取消数量
+     */
+    private void updateUserRecordOnCancel(Long userId, Long seckillGoodsId, Integer quantity) {
+        try {
+                    SeckillUserRecord userRecord = seckillUserRecordMapper.getByUserIdAndSeckillGoodsId(userId, seckillGoodsId);
+        if (userRecord != null) {
+            int newCount = userRecord.getQuantity() - quantity;
+            if (newCount <= 0) {
+                // 如果购买数量减为0或负数，可以选择删除记录或设为0
+                newCount = 0;
+            }
+            
+            userRecord.setQuantity(newCount);
+            userRecord.setUpdateTime(LocalDateTime.now());
+                seckillUserRecordMapper.update(userRecord);
+                
+                log.info("更新用户购买记录成功，用户ID：{}，商品ID：{}，新购买数量：{}", userId, seckillGoodsId, newCount);
+            }
+        } catch (Exception e) {
+            log.error("更新用户购买记录失败，用户ID：{}，商品ID：{}", userId, seckillGoodsId, e);
+            // 这里不抛异常，避免影响订单取消流程
+        }
+    }
+
+    /**
+     * 检查用户购买资格
+     * @param seckillGoodsId 秒杀商品ID
+     * @param quantity 购买数量
+     * @return 购买资格信息
+     */
+    @Override
+    public Object checkEligibility(Long seckillGoodsId, Integer quantity) {
+        Long userId = BaseContext.getCurrentId();
+        if (userId == null) {
+            userId = 4L; // 模拟用户ID
+        }
+
+        // 获取秒杀商品信息
+        SeckillGoods seckillGoods = seckillGoodsMapper.getById(seckillGoodsId);
+        if (seckillGoods == null) {
+            throw new OrderBusinessException("秒杀商品不存在");
+        }
+
+        // 检查用户已购买数量
+        SeckillUserRecord userRecord = seckillUserRecordMapper.getByUserIdAndSeckillGoodsId(userId, seckillGoodsId);
+        int userPurchased = userRecord != null ? userRecord.getQuantity() : 0;
+        
+        // 计算剩余可购买数量
+        int remainingQuota = seckillGoods.getLimitCount() - userPurchased;
+        boolean canPurchase = remainingQuota >= quantity && seckillGoods.getAvailableStock() >= quantity;
+
+        // 构建返回结果
+        Map<String, Object> result = new HashMap<>();
+        result.put("canPurchase", canPurchase);
+        result.put("remainingQuota", Math.max(0, remainingQuota));
+        result.put("limitCount", seckillGoods.getLimitCount());
+        result.put("userPurchased", userPurchased);
+        result.put("availableStock", seckillGoods.getAvailableStock());
+
+        return result;
+    }
+}

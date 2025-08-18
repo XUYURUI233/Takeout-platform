@@ -3,40 +3,107 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sky.mapper.SeckillOrderMapper">
 
-    <select id="adminPageQuery" resultType="com.sky.entity.SeckillOrder">
-        select so.*, o.number, o.status, o.user_id, o.order_time, o.checkout_time, o.pay_method, 
-               o.pay_status, o.amount, o.phone, o.address, o.user_name, o.consignee
-        from seckill_order so
-        left join orders o on so.order_id = o.id
-        <where>
-            <if test="number != null and number != ''">
-                and o.number like concat('%',#{number},'%')
-            </if>
-            <if test="phone != null and phone != ''">
-                and o.phone like concat('%',#{phone},'%')
-            </if>
-            <if test="status != null">
-                and o.status = #{status}
-            </if>
-            <if test="beginTime != null">
-                and o.order_time >= #{beginTime}
-            </if>
-            <if test="endTime != null">
-                and o.order_time &lt;= #{endTime}
-            </if>
-        </where>
-        order by o.order_time desc
+    <!-- Insert seckill order -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into seckill_order (
+            order_id, number, activity_id, seckill_goods_id, goods_name, goods_image, goods_type,
+            original_price, seckill_price, quantity, amount, user_id, status, pay_status, pay_method,
+            order_time, checkout_time, pay_expire_time, remark, address_book_id, consignee, phone, address,
+            create_time, update_time, create_user, update_user
+        ) values (
+            #{orderId}, #{number}, #{activityId}, #{seckillGoodsId}, #{goodsName}, #{goodsImage}, #{goodsType},
+            #{originalPrice}, #{seckillPrice}, #{quantity}, #{amount}, #{userId}, #{status}, #{payStatus}, #{payMethod},
+            #{orderTime}, #{checkoutTime}, #{payExpireTime}, #{remark}, #{addressBookId}, #{consignee}, #{phone}, #{address},
+            #{createTime}, #{updateTime}, #{createUser}, #{updateUser}
+        )
+    </insert>
+
+    <!-- Update seckill order -->
+    <update id="update">
+        update seckill_order
+        <set>
+            <if test="status != null">status = #{status},</if>
+            <if test="payStatus != null">pay_status = #{payStatus},</if>
+            <if test="payMethod != null">pay_method = #{payMethod},</if>
+            <if test="checkoutTime != null">checkout_time = #{checkoutTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!-- User paginated query for seckill orders -->
+    <select id="pageQueryByUser" resultType="com.sky.entity.SeckillOrder">
+        select * from seckill_order
+        where user_id = #{userId}
+        <if test="status != null">
+            and status = #{status}
+        </if>
+        order by order_time desc
     </select>
 
-    <select id="userPageQuery" resultType="com.sky.entity.SeckillOrder">
-        select so.*, o.number, o.status, o.order_time, o.pay_status, o.amount
-        from seckill_order so
-        left join orders o on so.order_id = o.id
-        where so.user_id = #{userId}
-        <if test="status != null">
-            and o.status = #{status}
+    <!-- Get rollbackable orders (pending payment status) -->
+    <select id="getRollbackableOrders" resultType="com.sky.entity.SeckillOrder">
+        select * from seckill_order 
+        where seckill_goods_id = #{seckillGoodsId} 
+        and status = 1 
+        limit #{maxCount}
+    </select>
+
+    <!-- Get orders by time range -->
+    <select id="getOrdersByTimeRange" resultType="com.sky.entity.SeckillOrder">
+        select * from seckill_order 
+        where seckill_goods_id = #{seckillGoodsId} 
+        and order_time between #{startTime} and #{endTime}
+    </select>
+
+    <!-- Get completed order quantity -->
+    <select id="getCompletedOrderQuantity" resultType="java.lang.Integer">
+        select COALESCE(sum(quantity), 0) 
+        from seckill_order 
+        where seckill_goods_id = #{seckillGoodsId} 
+        and status = 5
+    </select>
+
+    <!-- Count total orders for activity statistics -->
+    <select id="countTotalOrders" resultType="java.lang.Integer">
+        select count(*)
+        from seckill_order
+        where activity_id = #{activityId}
+        <if test="beginDate != null and beginDate != ''">
+            and DATE(order_time) &gt;= #{beginDate}
         </if>
-        order by o.order_time desc
+        <if test="endDate != null and endDate != ''">
+            and DATE(order_time) &lt;= #{endDate}
+        </if>
+    </select>
+
+    <!-- Count success orders for activity statistics -->
+    <select id="countSuccessOrders" resultType="java.lang.Integer">
+        select count(*)
+        from seckill_order
+        where activity_id = #{activityId}
+        and status = 5
+        <if test="beginDate != null and beginDate != ''">
+            and DATE(order_time) &gt;= #{beginDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            and DATE(order_time) &lt;= #{endDate}
+        </if>
+    </select>
+
+    <!-- Sum total amount for activity statistics -->
+    <select id="sumTotalAmount" resultType="java.lang.Double">
+        select COALESCE(sum(amount), 0.0)
+        from seckill_order
+        where activity_id = #{activityId}
+        and status = 5
+        <if test="beginDate != null and beginDate != ''">
+            and DATE(order_time) &gt;= #{beginDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            and DATE(order_time) &lt;= #{endDate}
+        </if>
     </select>
 
 </mapper>
