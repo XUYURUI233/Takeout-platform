@@ -423,6 +423,18 @@ public class OrderServiceImpl implements OrderService {
         orders.setCancelReason("用户取消");
         orders.setCancelTime(LocalDateTime.now());
         orderMapper.update(orders);
+        
+        // 同步更新秒杀订单状态
+        SeckillOrder seckillOrder = seckillOrderMapper.getByOrderId(id);
+        if (seckillOrder != null) {
+            SeckillOrder updateSeckillOrder = SeckillOrder.builder()
+                    .id(seckillOrder.getId())
+                    .status(Orders.CANCELLED)
+                    .updateTime(LocalDateTime.now())
+                    .build();
+            seckillOrderMapper.update(updateSeckillOrder);
+            log.info("同步更新秒杀订单状态为已取消，订单ID：{}", id);
+        }
     }
 
     /**
@@ -541,6 +553,18 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         orderMapper.update(orders);
+        
+        // 同步更新秒杀订单状态
+        SeckillOrder seckillOrder = seckillOrderMapper.getByOrderId(ordersConfirmDTO.getId());
+        if (seckillOrder != null) {
+            SeckillOrder updateSeckillOrder = SeckillOrder.builder()
+                    .id(seckillOrder.getId())
+                    .status(Orders.CONFIRMED)
+                    .updateTime(LocalDateTime.now())
+                    .build();
+            seckillOrderMapper.update(updateSeckillOrder);
+            log.info("同步更新秒杀订单状态为已接单，订单ID：{}", ordersConfirmDTO.getId());
+        }
     }
 
     /**
@@ -583,6 +607,18 @@ public class OrderServiceImpl implements OrderService {
         orders.setCancelTime(LocalDateTime.now());
 
         orderMapper.update(orders);
+        
+        // 同步更新秒杀订单状态
+        SeckillOrder seckillOrder = seckillOrderMapper.getByOrderId(ordersRejectionDTO.getId());
+        if (seckillOrder != null) {
+            SeckillOrder updateSeckillOrder = SeckillOrder.builder()
+                    .id(seckillOrder.getId())
+                    .status(Orders.CANCELLED)
+                    .updateTime(LocalDateTime.now())
+                    .build();
+            seckillOrderMapper.update(updateSeckillOrder);
+            log.info("同步更新秒杀订单状态为已取消，订单ID：{}", ordersRejectionDTO.getId());
+        }
     }
 
     /**
@@ -619,6 +655,18 @@ public class OrderServiceImpl implements OrderService {
         orders.setCancelReason(ordersCancelDTO.getCancelReason());
         orders.setCancelTime(LocalDateTime.now());
         orderMapper.update(orders);
+        
+        // 同步更新秒杀订单状态
+        SeckillOrder seckillOrder = seckillOrderMapper.getByOrderId(ordersCancelDTO.getId());
+        if (seckillOrder != null) {
+            SeckillOrder updateSeckillOrder = SeckillOrder.builder()
+                    .id(seckillOrder.getId())
+                    .status(Orders.CANCELLED)
+                    .updateTime(LocalDateTime.now())
+                    .build();
+            seckillOrderMapper.update(updateSeckillOrder);
+            log.info("同步更新秒杀订单状态为已取消，订单ID：{}", ordersCancelDTO.getId());
+        }
     }
 
     /**
@@ -641,6 +689,18 @@ public class OrderServiceImpl implements OrderService {
         orders.setStatus(Orders.DELIVERY_IN_PROGRESS);
 
         orderMapper.update(orders);
+        
+        // 同步更新秒杀订单状态
+        SeckillOrder seckillOrder = seckillOrderMapper.getByOrderId(id);
+        if (seckillOrder != null) {
+            SeckillOrder updateSeckillOrder = SeckillOrder.builder()
+                    .id(seckillOrder.getId())
+                    .status(Orders.DELIVERY_IN_PROGRESS)
+                    .updateTime(LocalDateTime.now())
+                    .build();
+            seckillOrderMapper.update(updateSeckillOrder);
+            log.info("同步更新秒杀订单状态为派送中，订单ID：{}", id);
+        }
     }
 
     /**
@@ -664,6 +724,18 @@ public class OrderServiceImpl implements OrderService {
         orders.setDeliveryTime(LocalDateTime.now());
 
         orderMapper.update(orders);
+        
+        // 同步更新秒杀订单状态
+        SeckillOrder seckillOrder = seckillOrderMapper.getByOrderId(id);
+        if (seckillOrder != null) {
+            SeckillOrder updateSeckillOrder = SeckillOrder.builder()
+                    .id(seckillOrder.getId())
+                    .status(Orders.COMPLETED)
+                    .updateTime(LocalDateTime.now())
+                    .build();
+            seckillOrderMapper.update(updateSeckillOrder);
+            log.info("同步更新秒杀订单状态为已完成，订单ID：{}", id);
+        }
     }
 
     /**

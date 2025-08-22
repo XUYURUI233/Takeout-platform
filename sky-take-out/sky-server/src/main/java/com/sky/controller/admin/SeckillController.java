@@ -84,12 +84,13 @@ public class SeckillController {
 
     /**
      * 删除秒杀活动
-     * @param id
+     * @param requestBody
      * @return
      */
     @DeleteMapping("/activity")
     @ApiOperation("删除秒杀活动")
-    public Result<Void> delete(@RequestParam Long id) {
+    public Result<Void> delete(@RequestBody java.util.Map<String, Long> requestBody) {
+        Long id = requestBody.get("id");
         log.info("删除秒杀活动：{}", id);
         seckillActivityService.deleteById(id);
         return Result.success();
@@ -111,12 +112,13 @@ public class SeckillController {
     /**
      * 启用/停用秒杀活动
      * @param status
-     * @param id
+     * @param requestBody
      * @return
      */
     @PostMapping("/activity/status/{status}")
     @ApiOperation("启用/停用秒杀活动")
-    public Result<Void> startOrStop(@PathVariable Integer status, @RequestParam Long id) {
+    public Result<Void> startOrStop(@PathVariable Integer status, @RequestBody java.util.Map<String, Long> requestBody) {
+        Long id = requestBody.get("id");
         log.info("启用/停用秒杀活动：{}，{}", status, id);
         seckillActivityService.startOrStop(status, id);
         return Result.success();
@@ -152,12 +154,13 @@ public class SeckillController {
 
     /**
      * 删除秒杀商品
-     * @param id
+     * @param requestBody
      * @return
      */
     @DeleteMapping("/goods")
     @ApiOperation("删除秒杀商品")
-    public Result<Void> deleteGoods(@RequestParam Long id) {
+    public Result<Void> deleteGoods(@RequestBody java.util.Map<String, Long> requestBody) {
+        Long id = requestBody.get("id");
         log.info("删除秒杀商品：{}", id);
         seckillGoodsService.deleteById(id);
         return Result.success();
