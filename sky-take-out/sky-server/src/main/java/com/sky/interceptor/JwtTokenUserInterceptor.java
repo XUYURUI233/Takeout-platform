@@ -40,15 +40,25 @@ public class JwtTokenUserInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        //1、从请求头中获取令牌
+        //1、从请求头中获取令牌（兼容多种常见头名）
         String token = request.getHeader(jwtProperties.getUserTokenName());
+        if (token == null || token.isEmpty()) {
+            // 小程序端默认使用 'authentication'，同时兼容常见大小写和 'token'
+            String[] fallbackHeaderNames = new String[] {"authentication", "Authentication", "token", "Token", "Authorization"};
+            for (String headerName : fallbackHeaderNames) {
+                token = request.getHeader(headerName);
+                if (token != null && !token.isEmpty()) {
+                    break;
+                }
+            }
+        }
 
         //2、校验令牌
         try {
             log.info("jwt校验:{}", token);
             Claims claims = JwtUtil.parseJWT(jwtProperties.getUserSecretKey(), token);
             Long userId = Long.valueOf(claims.get(JwtClaimsConstant.USER_ID).toString());
-            log.info("当前用户的id：", userId);
+            log.info("当前用户的id：{}", userId);
             BaseContext.setCurrentId(userId);
             //3、通过，放行
             return true;

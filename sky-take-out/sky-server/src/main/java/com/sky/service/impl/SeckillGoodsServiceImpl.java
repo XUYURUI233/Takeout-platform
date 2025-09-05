@@ -15,6 +15,7 @@ import com.sky.mapper.SeckillUserRecordMapper;
 import com.sky.mapper.SetmealMapper;
 import com.sky.service.SeckillGoodsService;
 import com.sky.vo.SeckillGoodsVO;
+import com.sky.vo.AvailableGoodsVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -171,8 +172,8 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
      * @return
      */
     @Override
-    public List<SeckillGoodsVO> getAvailableGoods(Integer type, String name) {
-        List<SeckillGoodsVO> voList = new ArrayList<>();
+    public List<AvailableGoodsVO> getAvailableGoods(Integer type, String name) {
+        List<AvailableGoodsVO> voList = new ArrayList<>();
         
         if (type == null || type == 1) {
             // ≤È—Ø≤À∆∑
@@ -184,12 +185,12 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
                         !dish.getName().contains(name.trim())) {
                         continue;
                     }
-                    SeckillGoodsVO vo = new SeckillGoodsVO();
-                    vo.setGoodsId(dish.getId());
-                    vo.setGoodsName(dish.getName());
-                    vo.setGoodsImage(dish.getImage());
-                    vo.setOriginalPrice(dish.getPrice());
-                    vo.setGoodsType(1);
+                    AvailableGoodsVO vo = new AvailableGoodsVO();
+                    vo.setId(dish.getId());
+                    vo.setName(dish.getName());
+                    vo.setImage(dish.getImage());
+                    vo.setPrice(dish.getPrice());
+                    vo.setType(1);
                     voList.add(vo);
                 }
             }
@@ -205,12 +206,12 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
                         !setmeal.getName().contains(name.trim())) {
                         continue;
                     }
-                    SeckillGoodsVO vo = new SeckillGoodsVO();
-                    vo.setGoodsId(setmeal.getId());
-                    vo.setGoodsName(setmeal.getName());
-                    vo.setGoodsImage(setmeal.getImage());
-                    vo.setOriginalPrice(setmeal.getPrice());
-                    vo.setGoodsType(2);
+                    AvailableGoodsVO vo = new AvailableGoodsVO();
+                    vo.setId(setmeal.getId());
+                    vo.setName(setmeal.getName());
+                    vo.setImage(setmeal.getImage());
+                    vo.setPrice(setmeal.getPrice());
+                    vo.setType(2);
                     voList.add(vo);
                 }
             }

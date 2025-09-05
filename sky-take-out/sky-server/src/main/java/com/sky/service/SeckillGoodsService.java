@@ -2,6 +2,7 @@ package com.sky.service;
 
 import com.sky.dto.SeckillGoodsDTO;
 import com.sky.vo.SeckillGoodsVO;
+import com.sky.vo.AvailableGoodsVO;
 
 import java.util.List;
 
@@ -42,7 +43,7 @@ public interface SeckillGoodsService {
      * @param name
      * @return
      */
-    List<SeckillGoodsVO> getAvailableGoods(Integer type, String name);
+    List<AvailableGoodsVO> getAvailableGoods(Integer type, String name);
 
     /**
      * 检查用户购买资格

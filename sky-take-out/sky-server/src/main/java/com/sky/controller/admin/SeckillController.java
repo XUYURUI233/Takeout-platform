@@ -10,7 +10,7 @@ import com.sky.service.SeckillActivityService;
 import com.sky.service.SeckillGoodsService;
 import com.sky.service.SeckillOrderService;
 import com.sky.vo.SeckillActivityVO;
-import com.sky.vo.SeckillGoodsVO;
+import com.sky.vo.AvailableGoodsVO;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -84,13 +84,20 @@ public class SeckillController {
 
     /**
      * 删除秒杀活动
-     * @param requestBody
-     * @return
+     * 兼容 query 参数和 JSON Body 传 id
      */
     @DeleteMapping("/activity")
     @ApiOperation("删除秒杀活动")
-    public Result<Void> delete(@RequestBody java.util.Map<String, Long> requestBody) {
-        Long id = requestBody.get("id");
+    public Result<Void> delete(@RequestBody(required = false) java.util.Map<String, Object> requestBody,
+                               @RequestParam(value = "id", required = false) Long id) {
+        if (id == null && requestBody != null) {
+            Object val = requestBody.get("id");
+            if (val instanceof Number) {
+                id = ((Number) val).longValue();
+            } else if (val instanceof String) {
+                try { id = Long.parseLong((String) val); } catch (Exception ignored) {}
+            }
+        }
         log.info("删除秒杀活动：{}", id);
         seckillActivityService.deleteById(id);
         return Result.success();
@@ -111,14 +118,21 @@ public class SeckillController {
 
     /**
      * 启用/停用秒杀活动
-     * @param status
-     * @param requestBody
-     * @return
+     * 兼容 query 参数和 JSON Body 传 id
      */
     @PostMapping("/activity/status/{status}")
     @ApiOperation("启用/停用秒杀活动")
-    public Result<Void> startOrStop(@PathVariable Integer status, @RequestBody java.util.Map<String, Long> requestBody) {
-        Long id = requestBody.get("id");
+    public Result<Void> startOrStop(@PathVariable Integer status,
+                                   @RequestBody(required = false) java.util.Map<String, Object> requestBody,
+                                   @RequestParam(value = "id", required = false) Long id) {
+        if (id == null && requestBody != null) {
+            Object val = requestBody.get("id");
+            if (val instanceof Number) {
+                id = ((Number) val).longValue();
+            } else if (val instanceof String) {
+                try { id = Long.parseLong((String) val); } catch (Exception ignored) {}
+            }
+        }
         log.info("启用/停用秒杀活动：{}，{}", status, id);
         seckillActivityService.startOrStop(status, id);
         return Result.success();
@@ -132,10 +146,10 @@ public class SeckillController {
      */
     @GetMapping("/goods/available")
     @ApiOperation("查询可用商品列表")
-    public Result<List<SeckillGoodsVO>> getAvailableGoods(@RequestParam Integer type, 
-                                                          @RequestParam(required = false) String name) {
+    public Result<List<AvailableGoodsVO>> getAvailableGoods(@RequestParam Integer type, 
+                                                            @RequestParam(required = false) String name) {
         log.info("查询可用商品列表：{}，{}", type, name);
-        List<SeckillGoodsVO> list = seckillGoodsService.getAvailableGoods(type, name);
+        List<AvailableGoodsVO> list = seckillGoodsService.getAvailableGoods(type, name);
         return Result.success(list);
     }
 
@@ -154,13 +168,20 @@ public class SeckillController {
 
     /**
      * 删除秒杀商品
-     * @param requestBody
-     * @return
+     * 兼容 query 参数和 JSON Body 传 id
      */
     @DeleteMapping("/goods")
     @ApiOperation("删除秒杀商品")
-    public Result<Void> deleteGoods(@RequestBody java.util.Map<String, Long> requestBody) {
-        Long id = requestBody.get("id");
+    public Result<Void> deleteGoods(@RequestBody(required = false) java.util.Map<String, Object> requestBody,
+                                    @RequestParam(value = "id", required = false) Long id) {
+        if (id == null && requestBody != null) {
+            Object val = requestBody.get("id");
+            if (val instanceof Number) {
+                id = ((Number) val).longValue();
+            } else if (val instanceof String) {
+                try { id = Long.parseLong((String) val); } catch (Exception ignored) {}
+            }
+        }
         log.info("删除秒杀商品：{}", id);
         seckillGoodsService.deleteById(id);
         return Result.success();
