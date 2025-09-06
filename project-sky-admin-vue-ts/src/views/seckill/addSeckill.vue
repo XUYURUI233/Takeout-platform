@@ -305,22 +305,11 @@ export default class extends Vue {
       const res = await getSeckillActivityById(this.activityId)
       if (res.data.code === 1) {
         const data = res.data.data
-        const normalize = (val: string) => {
-          if (!val) return ''
-          let v = String(val).replace('T', ' ')
-          // 若为 yyyy-MM-dd HH:mm，补齐秒
-          if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(v)) v = v + ':00'
-          return v
-        }
-
-        const start = normalize(data.startTime)
-        const end = normalize(data.endTime)
-
         this.ruleForm = {
           name: data.name,
-          timeRange: [start, end],
-          startTime: start,
-          endTime: end,
+          timeRange: [data.startTime, data.endTime],
+          startTime: data.startTime,
+          endTime: data.endTime,
           image: data.image,
           description: data.description,
         }
@@ -417,7 +406,7 @@ export default class extends Vue {
         }
 
         // 准备提交的数据，确保字段名与后端DTO匹配
-        const formData: any = {
+        const formData = {
           name: this.ruleForm.name,
           image: this.ruleForm.image,
           startTime: this.ruleForm.startTime,

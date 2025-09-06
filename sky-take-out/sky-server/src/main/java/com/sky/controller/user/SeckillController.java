@@ -16,6 +16,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 
 import java.util.List;
 
@@ -41,6 +42,7 @@ public class SeckillController {
      */
     @GetMapping("/activity/active")
     @ApiOperation("查询进行中的秒杀活动")
+    @SentinelResource(value = "user_seckill_activity_active", blockHandler = "handleBlock")
     public Result<List<SeckillActivityVO>> getActiveActivities() {
         log.info("查询进行中的秒杀活动");
         List<SeckillActivityVO> activities = seckillActivityService.getActiveActivities();
@@ -67,6 +69,7 @@ public class SeckillController {
      */
     @GetMapping("/goods/{id}")
     @ApiOperation("查询秒杀商品详情")
+    @SentinelResource(value = "user_seckill_goods_detail", blockHandler = "handleBlock")
     public Result<SeckillGoodsVO> getSeckillGoodsDetail(@PathVariable Long id) {
         log.info("查询秒杀商品详情：{}", id);
         SeckillGoodsVO goods = seckillGoodsService.getById(id);
@@ -80,10 +83,28 @@ public class SeckillController {
      */
     @PostMapping("/order/submit")
     @ApiOperation("提交秒杀订单")
+    @SentinelResource(value = "user_seckill_order_submit", blockHandler = "handleBlock")
     public Result<SeckillOrderSubmitVO> submitOrder(@RequestBody SeckillOrderSubmitDTO seckillOrderSubmitDTO) {
         log.info("提交秒杀订单：{}", seckillOrderSubmitDTO);
         SeckillOrderSubmitVO result = seckillOrderService.submitOrder(seckillOrderSubmitDTO);
         return Result.success(result);
+    }
+
+    /**
+     * 使用Lua脚本提交秒杀订单（原子扣减库存）
+     */
+    @PostMapping("/order/submit-lua")
+    @ApiOperation("提交秒杀订单（Lua）")
+    @SentinelResource(value = "user_seckill_order_submit", blockHandler = "handleBlock")
+    public Result<SeckillOrderSubmitVO> submitOrderWithLua(@RequestBody SeckillOrderSubmitDTO seckillOrderSubmitDTO) {
+        log.info("提交秒杀订单（Lua）：{}", seckillOrderSubmitDTO);
+        SeckillOrderSubmitVO result = seckillOrderService.submitOrderWithLua(seckillOrderSubmitDTO);
+        return Result.success(result);
+    }
+
+    // Sentinel 限流/熔断统一处理
+    public <T> Result<T> handleBlock(Object arg1, Object arg2, Object arg3, Throwable ex) {
+        return Result.error(50010, "系统繁忙，请稍后重试");
     }
 
     /**

@@ -31,6 +31,7 @@ import com.sky.mapper.SetmealMapper;
 import com.sky.mapper.UserMapper;
 import com.sky.result.PageResult;
 import com.sky.service.SeckillOrderService;
+import com.sky.service.SeckillLuaService;
 import com.sky.service.SeckillStockService;
 
 import com.sky.vo.OrderPaymentVO;
@@ -83,6 +84,9 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
 
     @Autowired
     private SeckillStockService seckillStockService;
+
+    @Autowired
+    private SeckillLuaService seckillLuaService;
 
     /**
      * 提交秒杀订单
@@ -294,6 +298,182 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
                 .build();
 
         log.info("秒杀订单提交成功: {}", submitVO);
+        return submitVO;
+    }
+
+    /**
+     * 使用Lua脚本提交秒杀订单
+     */
+    @Override
+    @Transactional
+    public SeckillOrderSubmitVO submitOrderWithLua(SeckillOrderSubmitDTO seckillOrderSubmitDTO) {
+        log.info("[Lua] 提交秒杀订单: {}", seckillOrderSubmitDTO);
+
+        Long userId = BaseContext.getCurrentId();
+        if (userId == null) {
+            userId = 4L;
+        }
+
+        AddressBook addressBook = addressBookMapper.getById(seckillOrderSubmitDTO.getAddressBookId());
+        if (addressBook == null) {
+            throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_IS_NULL);
+        }
+
+        SeckillGoods seckillGoods = seckillGoodsMapper.getById(seckillOrderSubmitDTO.getSeckillGoodsId());
+        if (seckillGoods == null) {
+            throw new OrderBusinessException("秒杀商品不存在");
+        }
+        if (seckillGoods.getStatus() != SeckillGoods.ONLINE) {
+            throw new OrderBusinessException("秒杀商品已下架");
+        }
+
+        // 使用Lua进行库存原子扣减 + 限购校验
+        Map<String, Object> luaResult = seckillLuaService.executeStockDeduct(
+                seckillGoods.getId(),
+                userId,
+                seckillOrderSubmitDTO.getQuantity(),
+                seckillGoods.getLimitCount(),
+                24 * 60 * 60 // 用户限购记录默认1天过期，可按需调整
+        );
+        Integer code = (Integer) (luaResult.get("code") instanceof Integer ? luaResult.get("code") : Integer.valueOf(String.valueOf(luaResult.get("code"))));
+        if (code == null || code != 1) {
+            String msg = String.valueOf(luaResult.get("msg"));
+            throw new OrderBusinessException(msg != null ? msg : "系统繁忙，请稍后重试");
+        }
+
+        // 继续与 submitOrder 基本一致的落库流程（不再二次扣库）
+        String orderNumber = "SK" + System.currentTimeMillis();
+
+        // 用户购买记录 +1（与Lua保持一致，这里仅做最终一致性保障；若存在并发冲突按更新处理）
+        SeckillUserRecord userRecord = seckillUserRecordMapper.getByUserIdAndSeckillGoodsId(userId, seckillGoods.getId());
+        int alreadyPurchased = userRecord != null ? userRecord.getQuantity() : 0;
+        try {
+            if (userRecord == null) {
+                userRecord = SeckillUserRecord.builder()
+                        .activityId(seckillGoods.getActivityId())
+                        .seckillGoodsId(seckillGoods.getId())
+                        .userId(userId)
+                        .quantity(seckillOrderSubmitDTO.getQuantity())
+                        .createTime(LocalDateTime.now())
+                        .updateTime(LocalDateTime.now())
+                        .build();
+                seckillUserRecordMapper.insertOrUpdate(userRecord);
+            } else {
+                userRecord.setQuantity(alreadyPurchased + seckillOrderSubmitDTO.getQuantity());
+                userRecord.setUpdateTime(LocalDateTime.now());
+                seckillUserRecordMapper.update(userRecord);
+            }
+        } catch (DataIntegrityViolationException e) {
+            log.warn("[Lua] 用户记录并发，改为更新");
+            userRecord = seckillUserRecordMapper.getByUserIdAndSeckillGoodsId(userId, seckillGoods.getId());
+            if (userRecord != null) {
+                userRecord.setQuantity(userRecord.getQuantity() + seckillOrderSubmitDTO.getQuantity());
+                userRecord.setUpdateTime(LocalDateTime.now());
+                seckillUserRecordMapper.update(userRecord);
+            }
+        }
+
+        // 创建普通订单
+        Orders orders = new Orders();
+        orders.setNumber(orderNumber);
+        orders.setStatus(Orders.PENDING_PAYMENT);
+        orders.setUserId(userId);
+        orders.setAddressBookId(seckillOrderSubmitDTO.getAddressBookId());
+        orders.setOrderTime(LocalDateTime.now());
+        orders.setPayStatus(Orders.UN_PAID);
+        orders.setPayMethod(1);
+
+        java.math.BigDecimal totalAmount = seckillGoods.getSeckillPrice().multiply(new java.math.BigDecimal(seckillOrderSubmitDTO.getQuantity()));
+        orders.setAmount(totalAmount);
+        orders.setRemark(seckillOrderSubmitDTO.getRemark());
+        orders.setPhone(addressBook.getPhone());
+        orders.setAddress(addressBook.getDetail());
+        orders.setConsignee(addressBook.getConsignee());
+        orders.setEstimatedDeliveryTime(LocalDateTime.now().plusHours(1));
+        orders.setDeliveryStatus(1);
+        orders.setPackAmount(0);
+        orders.setTablewareNumber(1);
+        orders.setTablewareStatus(1);
+        orderMapper.insert(orders);
+
+        // 生成秒杀订单
+        String goodsName;
+        String goodsImage;
+        java.math.BigDecimal originalPrice;
+        if (seckillGoods.getGoodsType() == 1) {
+            Dish dish = dishMapper.getById(seckillGoods.getGoodsId());
+            if (dish != null) {
+                goodsName = dish.getName();
+                goodsImage = dish.getImage();
+                originalPrice = dish.getPrice();
+            } else {
+                goodsName = seckillGoods.getGoodsName();
+                goodsImage = seckillGoods.getGoodsImage();
+                originalPrice = seckillGoods.getOriginalPrice();
+            }
+        } else {
+            Setmeal setmeal = setmealMapper.getById(seckillGoods.getGoodsId());
+            if (setmeal != null) {
+                goodsName = setmeal.getName();
+                goodsImage = setmeal.getImage();
+                originalPrice = setmeal.getPrice();
+            } else {
+                goodsName = seckillGoods.getGoodsName();
+                goodsImage = seckillGoods.getGoodsImage();
+                originalPrice = seckillGoods.getOriginalPrice();
+            }
+        }
+
+        SeckillOrder seckillOrder = new SeckillOrder();
+        seckillOrder.setOrderId(orders.getId());
+        seckillOrder.setNumber(orders.getNumber());
+        seckillOrder.setActivityId(seckillGoods.getActivityId());
+        seckillOrder.setSeckillGoodsId(seckillGoods.getId());
+        seckillOrder.setGoodsName(goodsName);
+        seckillOrder.setGoodsImage(goodsImage);
+        seckillOrder.setGoodsType(seckillGoods.getGoodsType());
+        seckillOrder.setOriginalPrice(originalPrice);
+        seckillOrder.setSeckillPrice(seckillGoods.getSeckillPrice());
+        seckillOrder.setQuantity(seckillOrderSubmitDTO.getQuantity());
+        seckillOrder.setAmount(totalAmount);
+        seckillOrder.setUserId(userId);
+        seckillOrder.setStatus(Orders.PENDING_PAYMENT);
+        seckillOrder.setPayStatus(Orders.UN_PAID);
+        seckillOrder.setOrderTime(LocalDateTime.now());
+        seckillOrder.setPayExpireTime(LocalDateTime.now().plusMinutes(15));
+        seckillOrder.setRemark(seckillOrderSubmitDTO.getRemark());
+        seckillOrder.setAddressBookId(seckillOrderSubmitDTO.getAddressBookId());
+        seckillOrder.setConsignee(addressBook.getConsignee());
+        seckillOrder.setPhone(addressBook.getPhone());
+        seckillOrder.setAddress(addressBook.getDetail());
+        seckillOrder.setCreateTime(LocalDateTime.now());
+        seckillOrder.setUpdateTime(LocalDateTime.now());
+        seckillOrder.setCreateUser(userId);
+        seckillOrder.setUpdateUser(userId);
+        seckillOrderMapper.insert(seckillOrder);
+
+        // 订单明细
+        OrderDetail orderDetail = new OrderDetail();
+        orderDetail.setOrderId(orders.getId());
+        orderDetail.setName(goodsName);
+        orderDetail.setImage(goodsImage);
+        orderDetail.setDishId(seckillGoods.getGoodsType() == 1 ? seckillGoods.getGoodsId() : null);
+        orderDetail.setSetmealId(seckillGoods.getGoodsType() == 2 ? seckillGoods.getGoodsId() : null);
+        orderDetail.setDishFlavor("");
+        orderDetail.setNumber(seckillOrderSubmitDTO.getQuantity());
+        orderDetail.setAmount(seckillGoods.getSeckillPrice());
+        java.util.List<OrderDetail> list = new java.util.ArrayList<>();
+        list.add(orderDetail);
+        orderDetailMapper.insertBatch(list);
+
+        SeckillOrderSubmitVO submitVO = SeckillOrderSubmitVO.builder()
+                .orderId(seckillOrder.getId())
+                .orderNumber(orders.getNumber())
+                .payExpireTime(seckillOrder.getPayExpireTime())
+                .totalAmount(seckillOrder.getAmount())
+                .payTimeLimit(15 * 60)
+                .build();
+        log.info("[Lua] 秒杀订单提交成功: {}", submitVO);
         return submitVO;
     }
 

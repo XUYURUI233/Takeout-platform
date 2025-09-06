@@ -19,6 +19,13 @@ public interface SeckillOrderService {
     SeckillOrderSubmitVO submitOrder(SeckillOrderSubmitDTO seckillOrderSubmitDTO);
 
     /**
+     * 使用Lua脚本提交秒杀订单（原子扣减库存）
+     * @param seckillOrderSubmitDTO 提交数据
+     * @return 下单结果
+     */
+    SeckillOrderSubmitVO submitOrderWithLua(SeckillOrderSubmitDTO seckillOrderSubmitDTO);
+
+    /**
      * 秒杀订单支付
      * @param ordersPaymentDTO
      * @return
